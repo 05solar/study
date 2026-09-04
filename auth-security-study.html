@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로그인/회원가입 시스템 보안 — JWT, OAuth, SSO, Keycloak</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --card: #ffffff;
+    --ink: #111111;
+    --muted: #111111;
+    --line: #d6d6d6;
+    --soft: #f4f4f4;
+    --code-bg: #f5f5f5;
+    --hero-bg: #ffffff;
+    --hero-ink: #111111;
+    --accent: #2b5cd9;
+    --accent-soft: #e9effc;
+    --danger: #d23c3c;
+    --danger-soft: #fdecec;
+  }
+    * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 18px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 40px 24px 100px; }
+
+
+  header.hero {
+    background: #ffffff;
+    color: var(--ink);
+    border: 3px solid var(--accent);
+    border-left-width: 10px;
+    
+    padding: 42px 38px;
+    margin-bottom: 36px;
+  }
+  header.hero h1 { margin: 0 0 10px; font-size: 1.85em; line-height: 1.3; color: var(--accent); }
+  header.hero p { margin: 0; }
+
+  nav.toc {
+    background: var(--card);
+    border: 1px solid var(--line);
+    
+    padding: 24px 28px;
+    margin-bottom: 36px;
+  }
+  nav.toc h2 { margin: 0 0 12px; font-size: 1.05em; letter-spacing: 0.05em; }
+  nav.toc ol { margin: 0; padding-left: 22px; column-count: 2; column-gap: 40px; }
+  nav.toc a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); }
+  nav.toc a:hover { border-bottom-color: var(--ink); }
+  @media (max-width: 640px) { nav.toc ol { column-count: 1; } }
+
+  section {
+    background: var(--card);
+    border: 1px solid var(--line);
+    
+    padding: 28px 32px;
+    margin-bottom: 28px;
+  }
+  h2 {
+    font-size: 1.4em;
+    margin: 0 0 6px;
+    padding-bottom: 10px;
+    color: var(--accent);
+    border-bottom: 3px solid var(--accent);
+    scroll-margin-top: 20px;
+  }
+  h3 { font-size: 1.12em; margin: 30px 0 8px; }
+  h4 { font-size: 1em; margin: 20px 0 6px; }
+  .sub { color: var(--muted); font-size: 0.92em; margin: 8px 0 18px; }
+  p { margin: 10px 0; }
+  a { color: var(--accent); }
+
+  code {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    padding: 1px 6px;
+    
+    font-size: 0.86em;
+    font-family: Consolas, "D2Coding", monospace;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.6;
+  }
+  pre code { background: none; border: none; padding: 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.92em;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: var(--accent-soft); }
+
+  .box {
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--accent);
+    
+    padding: 14px 18px;
+    margin: 18px 0;
+    background: var(--soft);
+  }
+  .box .tag-line {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 0.78em;
+    letter-spacing: 0.12em;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 0 10px;
+    
+    margin-bottom: 8px;
+  }
+  .box.deny { border-left-color: var(--danger); background: var(--danger-soft); }
+  .box.deny .tag-line { border-color: var(--danger); color: var(--danger); }
+
+  /* ---------- 도면(다이어그램) 공통 ---------- */
+  figure.diagram {
+    margin: 22px 0;
+    border: 1px solid var(--line);
+    
+    padding: 18px 14px 10px;
+    background: var(--card);
+    overflow-x: auto;
+  }
+  figure.diagram figcaption {
+    font-size: 0.85em;
+    color: var(--muted);
+    text-align: center;
+    padding: 8px 10px 4px;
+    border-top: 1px dashed var(--line);
+    margin-top: 8px;
+  }
+  svg.d { display: block; width: 100%; height: auto; min-width: 620px; color: var(--ink); }
+  svg.d text { fill: var(--ink); font-size: 15px; font-family: inherit; }
+  svg.d .small { font-size: 13px; }
+  svg.d .strong { font-weight: 700; }
+  svg.d .box { fill: var(--card); stroke: var(--ink); stroke-width: 1.6; }
+  svg.d .boxsoft { fill: var(--soft); stroke: var(--muted); stroke-width: 1.2; }
+  svg.d .boxdark { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.6; }
+  svg.d .ondark { fill: var(--ink); }
+  svg.d .life { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 3 5; }
+  svg.d .arrow { stroke: var(--ink); stroke-width: 1.7; fill: none; marker-end: url(#ah); }
+  svg.d .ret { stroke-dasharray: 6 5; }
+  svg.d .blocked { stroke: var(--muted); stroke-width: 1.5; fill: none; stroke-dasharray: 4 4; }
+  svg.d .xmark { stroke: var(--danger); stroke-width: 2.4; }
+  svg.d .dot { fill: var(--accent); stroke: var(--bg); stroke-width: 1.5; transition: opacity .15s; }
+  svg.d .msg line, svg.d .msg path { transition: stroke-width 0.25s; }
+  svg.d .msg.active text { font-weight: 700; fill: var(--accent); }
+  svg.d .msg.active line, svg.d .msg.active path { stroke-width: 3; stroke: var(--accent); marker-end: url(#ahA); }
+  svg.d .static { opacity: 1; }
+  #ahead { fill: var(--ink); }
+
+  ul li, ol li { margin: 5px 0; }
+  .divider { border: none; border-top: 1px solid var(--line); margin: 26px 0; }
+  .kw {
+    display: inline-block;
+    border: 1px solid var(--accent);
+    padding: 1px 13px;
+    font-size: 0.8em;
+    margin: 2px 6px 2px 0;
+    color: var(--accent);
+  }
+  footer { text-align: center; color: var(--muted); font-size: 0.85em; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<!-- 모든 도면이 공유하는 화살촉 정의 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path id="ahead" d="M 0 0 L 10 5 L 0 10 z"/>
+    </marker>
+    <marker id="ahA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2b5cd9"/>
+    </marker>
+  </defs>
+</svg>
+
+
+<div class="wrap">
+
+<header class="hero">
+  <h1>로그인/회원가입 시스템 보안 완전 정리</h1>
+  <p>비밀번호 저장 &rarr; 세션 vs 토큰 &rarr; JWT &rarr; OAuth 2.0 / OIDC &rarr; SSO &rarr; Keycloak 순서로,<br>
+  인증 시스템을 만들 때 알아야 할 보안 개념을 도면과 흐름 애니메이션으로 정리한 학습 문서입니다.<br>
+  <span style="font-size:0.9em">각 도면의 파란 점은 데이터의 이동을 나타내며, 현재 진행 중인 단계가 진하게 강조됩니다. 자동으로 반복 재생됩니다.</span></p>
+</header>
+
+<nav class="toc">
+  <h2>목차</h2>
+  <ol>
+    <li><a href="#basics">인증과 인가</a></li>
+    <li><a href="#password">비밀번호 저장 보안</a></li>
+    <li><a href="#session-vs-token">세션 방식 vs 토큰 방식</a></li>
+    <li><a href="#jwt">JWT 완전 해부</a></li>
+    <li><a href="#refresh">Access / Refresh Token 전략</a></li>
+    <li><a href="#storage">토큰 저장 위치 — XSS와 CSRF</a></li>
+    <li><a href="#oauth">OAuth 2.0</a></li>
+    <li><a href="#oidc">OIDC (OpenID Connect)</a></li>
+    <li><a href="#sso">SSO (Single Sign-On)</a></li>
+    <li><a href="#keycloak">Keycloak</a></li>
+    <li><a href="#msa">MSA 환경의 인증 구조</a></li>
+    <li><a href="#checklist">실전 보안 체크리스트</a></li>
+  </ol>
+</nav>
+
+<!-- ============================================================ -->
+<section id="basics">
+  <h2>1. 인증(Authentication)과 인가(Authorization)</h2>
+  <p class="sub">모든 로그인 시스템의 출발점이 되는 두 개념. 이름이 비슷해서 자주 헷갈리지만 완전히 다른 일을 한다.</p>
+
+  <figure class="diagram">
+    <svg class="d anim" viewBox="0 0 900 200" role="img" aria-label="인증과 인가의 2단계 관문 도면">
+      <!-- 상자들 -->
+      <rect class="box" x="30" y="60" width="140" height="60"/>
+      <text x="100" y="86" text-anchor="middle" class="strong">사용자</text>
+      <text x="100" y="106" text-anchor="middle" class="small">요청을 보냄</text>
+
+      <rect class="box" x="255" y="60" width="180" height="60"/>
+      <text x="345" y="86" text-anchor="middle" class="strong">인증 관문</text>
+      <text x="345" y="106" text-anchor="middle" class="small">"너 누구야?" (401)</text>
+
+      <rect class="box" x="520" y="60" width="180" height="60"/>
+      <text x="610" y="86" text-anchor="middle" class="strong">인가 관문</text>
+      <text x="610" y="106" text-anchor="middle" class="small">"권한 있어?" (403)</text>
+
+      <rect class="box" x="770" y="60" width="110" height="60"/>
+      <text x="825" y="86" text-anchor="middle" class="strong">자원</text>
+      <text x="825" y="106" text-anchor="middle" class="small">API / 페이지</text>
+
+      <!-- 흐름 -->
+      <g class="msg" data-step="1">
+        <line class="arrow" x1="170" y1="90" x2="249" y2="90"/>
+        <text x="210" y="50" text-anchor="middle" class="small">1. 로그인</text>
+        <text x="210" y="150" text-anchor="middle" class="small">ID / PW, 토큰</text>
+      </g>
+      <g class="msg" data-step="2">
+        <line class="arrow" x1="435" y1="90" x2="514" y2="90"/>
+        <text x="477" y="50" text-anchor="middle" class="small">2. 신원 확인 통과</text>
+        <text x="477" y="150" text-anchor="middle" class="small">"회원 42번이군"</text>
+      </g>
+      <g class="msg" data-step="3">
+        <line class="arrow" x1="700" y1="90" x2="764" y2="90"/>
+        <text x="733" y="50" text-anchor="middle" class="small">3. 권한 확인 통과</text>
+        <text x="733" y="150" text-anchor="middle" class="small">"ADMIN 맞음"</text>
+      </g>
+    </svg>
+    <figcaption>도면 1. 요청은 인증 관문(누구인가)과 인가 관문(권한이 있는가)을 차례로 통과해야 자원에 도달한다.</figcaption>
+  </figure>
+
+  <table>
+    <tr><th></th><th>인증 (Authentication, AuthN)</th><th>인가 (Authorization, AuthZ)</th></tr>
+    <tr>
+      <td><strong>질문</strong></td>
+      <td>"너 누구야?" — 신원 확인</td>
+      <td>"너 이거 해도 돼?" — 권한 확인</td>
+    </tr>
+    <tr>
+      <td><strong>예시</strong></td>
+      <td>아이디/비밀번호 로그인, 지문 인식, OTP</td>
+      <td>일반 회원은 글 작성 가능, 관리자만 삭제 가능</td>
+    </tr>
+    <tr>
+      <td><strong>시점</strong></td>
+      <td>먼저 일어남 (로그인)</td>
+      <td>인증 이후 매 요청마다 검사</td>
+    </tr>
+    <tr>
+      <td><strong>HTTP 에러</strong></td>
+      <td><code>401 Unauthorized</code> (사실상 "인증 안 됨")</td>
+      <td><code>403 Forbidden</code> ("누군지는 아는데 권한 없음")</td>
+    </tr>
+  </table>
+
+  <div class="box">
+    <span class="tag-line">핵심</span><br>
+    로그인 = 인증. 로그인 후 "관리자 페이지 접근 가능?"을 따지는 것 = 인가.
+    JWT, 세션, SSO, Keycloak 전부 이 두 가지를 <em>어떻게 구현하느냐</em>에 대한 도구다.
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="password">
+  <h2>2. 회원가입 보안 — 비밀번호는 절대 그대로 저장하지 않는다</h2>
+  <p class="sub">DB가 털렸을 때 피해를 최소화하는 것이 목표. "털리지 않게"가 아니라 "털려도 안전하게"를 설계한다.</p>
+
+  <h3>2-1. 평문 저장 금지, 해시(Hash) 저장</h3>
+  <p>해시 함수는 <strong>단방향</strong>이다. 비밀번호에서 해시값을 만드는 것은 쉽지만, 해시값에서 비밀번호를 되돌리는 것은 사실상 불가능하다.</p>
+
+  <figure class="diagram">
+    <svg class="d anim" viewBox="0 0 900 230" role="img" aria-label="단방향 해시 도면">
+      <rect class="box" x="30" y="60" width="200" height="80"/>
+      <text x="130" y="90" text-anchor="middle" class="strong">비밀번호 + Salt</text>
+      <text x="130" y="112" text-anchor="middle" class="small">"pw123" + "x9f2..."</text>
+      <text x="130" y="128" text-anchor="middle" class="small">(사용자마다 다른 랜덤값)</text>
+
+      <rect class="box" x="350" y="60" width="180" height="80"/>
+      <text x="440" y="92" text-anchor="middle" class="strong">bcrypt / Argon2</text>
+      <text x="440" y="115" text-anchor="middle" class="small">일부러 느린 해시 함수</text>
+
+      <rect class="box" x="650" y="60" width="220" height="80"/>
+      <text x="760" y="92" text-anchor="middle" class="strong">DB에 저장되는 값</text>
+      <text x="760" y="115" text-anchor="middle" class="small">$2b$12$LJ3m4X...9fKz</text>
+
+      <g class="msg" data-step="1">
+        <line class="arrow" x1="230" y1="100" x2="344" y2="100"/>
+        <text x="287" y="50" text-anchor="middle" class="small">1. 입력</text>
+      </g>
+      <g class="msg" data-step="2">
+        <line class="arrow" x1="530" y1="100" x2="644" y2="100"/>
+        <text x="587" y="50" text-anchor="middle" class="small">2. 해시 계산 (순방향: 쉬움)</text>
+      </g>
+
+      <!-- 역방향 불가 -->
+      <g class="static">
+        <path class="blocked" d="M 700 165 C 550 210 350 210 200 165" marker-end="url(#ah)"/>
+        <line class="xmark" x1="438" y1="180" x2="462" y2="204"/>
+        <line class="xmark" x1="462" y1="180" x2="438" y2="204"/>
+        <text x="450" y="228" text-anchor="middle" class="small">역방향 계산 불가 — 해시값에서 비밀번호를 되돌릴 수 없다 (단방향)</text>
+      </g>
+    </svg>
+    <figcaption>도면 2. 해시는 한 방향으로만 흐른다. 로그인 검증은 "입력값을 같은 방식으로 해시해서 저장된 값과 비교"하는 것이지, 해시를 푸는 것이 아니다.</figcaption>
+  </figure>
+
+  <h3>2-2. 단순 해시(SHA-256)로는 부족한 이유</h3>
+  <ul>
+    <li><strong>레인보우 테이블 공격:</strong> 자주 쓰는 비밀번호의 해시값을 미리 계산해 둔 표. <code>SHA-256("123456")</code>은 전 세계 어디서나 같은 값이므로 표를 만들어 역추적할 수 있다.</li>
+    <li><strong>속도가 너무 빠름:</strong> SHA-256은 초당 수십억 번 계산 가능해 무차별 대입(brute-force)에 취약하다.</li>
+  </ul>
+
+  <h3>2-3. 해결책: Salt + 느린 해시 함수</h3>
+
+  <figure class="diagram">
+    <svg class="d" viewBox="0 0 900 180" role="img" aria-label="Salt의 효과 도면">
+      <rect class="box" x="40" y="30" width="190" height="52"/>
+      <text x="135" y="52" text-anchor="middle">사용자 A: "pw123"</text>
+      <text x="135" y="72" text-anchor="middle" class="small">Salt = "aG3k"</text>
+
+      <rect class="box" x="40" y="105" width="190" height="52"/>
+      <text x="135" y="127" text-anchor="middle">사용자 B: "pw123"</text>
+      <text x="135" y="147" text-anchor="middle" class="small">Salt = "Zq81"</text>
+
+      <line class="arrow" x1="230" y1="56" x2="374" y2="56"/>
+      <line class="arrow" x1="230" y1="131" x2="374" y2="131"/>
+      <text x="302" y="46" text-anchor="middle" class="small">같은 비밀번호</text>
+      <text x="302" y="121" text-anchor="middle" class="small">같은 비밀번호</text>
+
+      <rect class="boxdark" x="380" y="30" width="240" height="52"/>
+      <text x="500" y="62" text-anchor="middle" class="ondark">$2b$12$aG3k...Tq9Lw</text>
+      <rect class="boxdark" x="380" y="105" width="240" height="52"/>
+      <text x="500" y="137" text-anchor="middle" class="ondark">$2b$12$Zq81...c8VmE</text>
+
+      <text x="760" y="88" text-anchor="middle" class="strong">해시값이 서로 다름</text>
+      <text x="760" y="110" text-anchor="middle" class="small">미리 계산한 표</text>
+      <text x="760" y="128" text-anchor="middle" class="small">(레인보우 테이블) 무력화</text>
+    </svg>
+    <figcaption>도면 3. Salt 덕분에 같은 비밀번호라도 사용자마다 저장값이 달라진다.</figcaption>
+  </figure>
+
+  <ul>
+    <li><strong>Salt(솔트):</strong> 사용자마다 다른 랜덤 값을 비밀번호에 붙여서 해시. 미리 계산해 둔 표가 소용없어진다.</li>
+    <li><strong>느린 해시 함수:</strong>
+      <ul>
+        <li><code>bcrypt</code> — 가장 널리 쓰임. Spring Security의 <code>BCryptPasswordEncoder</code>, Node의 <code>bcrypt</code> 패키지. 솔트가 결과 문자열에 자동 포함된다.</li>
+        <li><code>Argon2</code> — 2015년 암호 해싱 대회 우승, 현재 최신 권장. 메모리도 많이 쓰게 해서 GPU 공격까지 방어한다.</li>
+        <li><code>PBKDF2</code>, <code>scrypt</code> — 역시 사용 가능한 표준 알고리즘.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <pre><code>// Spring Security 예시
+PasswordEncoder encoder = new BCryptPasswordEncoder();
+String hashed = encoder.encode("mypassword123");   // 저장할 때
+encoder.matches("mypassword123", hashed);          // 로그인 검증할 때
+
+// Node.js 예시
+const bcrypt = require('bcrypt');
+const hashed = await bcrypt.hash(password, 12);    // 12 = cost factor (높을수록 느림=안전)
+const ok = await bcrypt.compare(input, hashed);</code></pre>
+
+  <h3>2-4. 회원가입/로그인 폼에서 추가로 챙길 것</h3>
+  <ul>
+    <li><strong>HTTPS 필수</strong> — 평문 HTTP로는 비밀번호가 네트워크에서 그대로 노출된다.</li>
+    <li><strong>로그인 시도 제한 (Rate Limiting)</strong> — 5회 실패 시 잠금/캡차 등으로 무차별 대입 방어.</li>
+    <li><strong>에러 메시지 통일</strong> — "아이디가 없습니다"와 "비밀번호가 틀렸습니다"를 구분해서 알려주면 공격자에게 가입된 아이디 목록을 알려주는 셈이다. "아이디 또는 비밀번호가 올바르지 않습니다"로 통일한다.</li>
+    <li><strong>비밀번호 정책</strong> — 최소 길이(8자 이상)가 특수문자 강제보다 중요하다. 유출된 비밀번호 목록과 대조하는 것도 좋은 방법.</li>
+    <li><strong>SQL Injection 방어</strong> — 반드시 Prepared Statement / ORM 파라미터 바인딩 사용. 문자열 조립으로 쿼리를 만들지 않는다.</li>
+  </ul>
+
+  <div class="box deny">
+    <span class="tag-line">금지</span><br>
+    평문 저장, MD5/SHA-1 사용(이미 깨진 알고리즘), 솔트 없이 SHA-256만 사용, 비밀번호를 이메일로 발송(비밀번호 찾기는 재설정 링크로), 비밀번호를 로그에 출력.
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="session-vs-token">
+  <h2>3. 로그인 상태 유지 — 세션 방식 vs 토큰 방식</h2>
+  <p class="sub">HTTP는 상태가 없다(stateless). 서버는 "방금 로그인한 사람"과 "다음 요청을 보낸 사람"이 같은 사람인지 기본적으로 모른다. 이를 해결하는 두 가지 방식.</p>
+
+  <h3>3-1. 세션(Session) 방식 — 서버가 기억한다</h3>
+
+  <figure class="diagram">
+    <svg class="d anim" viewBox="0 0 900 420" role="img" aria-label="세션 방식 순서 도면">
+      <!-- 참여자 -->
+      <rect class="box" x="115" y="14" width="170" height="36"/>
+      <text x="200" y="38" text-anchor="middle" class="strong">브라우저</text>
+      <rect class="box" x="395" y="14" width="170" height="36"/>
+      <text x="480" y="38" text-anchor="middle" class="strong">서버</text>
+      <rect class="box" x="645" y="14" width="190" height="36"/>
+      <text x="740" y="38" text-anchor="middle" class="strong">세션 저장소 (Redis)</text>
+      <line class="life" x1="200" y1="50" x2="200" y2="405"/>
+      <line class="life" x1="480" y1="50" x2="480" y2="405"/>
+      <line class="life" x1="740" y1="50" x2="740" y2="405"/>
+
+      <g class="msg" data-step="1">
+        <line class="arrow" x1="200" y1="95" x2="474" y2="95"/>
+        <text x="340" y="86" text-anchor="middle">1. ID / PW 로그인</text>
+      </g>
+      <g class="msg" data-step="2">
+        <line class="arrow" x1="480" y1="140" x2="734" y2="140"/>
+        <text x="610" y="131" text-anchor="middle">2. 세션 저장 { sid: abc, user: 42 }</text>
+      </g>
+      <g class="msg" data-step="3">
+        <line class="arrow ret" x1="480" y1="185" x2="206" y2="185"/>
+        <text x="340" y="176" text-anchor="middle">3. Set-Cookie: SESSIONID=abc</text>
+      </g>
+      <g class="msg" data-step="4">
+        <line class="arrow" x1="200" y1="230" x2="474" y2="230"/>
+        <text x="340" y="221" text-anchor="middle">4. 요청 (쿠키 자동 첨부)</text>
+      </g>
+      <g class="msg" data-step="5">
+        <line class="arrow" x1="480" y1="275" x2="734" y2="275"/>
+        <text x="610" y="266" text-anchor="middle">5. sid=abc 조회</text>
+      </g>
+      <g class="msg" data-step="6">
+        <line class="arrow ret" x1="740" y1="320" x2="486" y2="320"/>
+        <text x="610" y="311" text-anchor="middle">6. "user 42입니다"</text>
+      </g>
+      <g class="msg" data-step="7">
+        <line class="arrow ret" x1="480" y1="365" x2="206" y2="365"/>
+        <text x="340" y="356" text-anchor="middle">7. 응답</text>
+      </g>
+    </svg>
+    <figcaption>도면 4. 세션 방식 — 상태(누가 로그인했는지)를 서버 쪽 저장소가 들고 있고, 브라우저는 의미 없는 세션 ID만 쿠키로 갖는다. 실선: 요청, 점선: 응답.</figcaption>
+  </figure>
+
+  <ul>
+    <li>장점: 서버가 세션을 지우면 <strong>즉시 로그아웃/강제 만료</strong>가 가능해 통제력이 강하다. 쿠키에는 의미 없는 랜덤 ID만 들어가므로 유출되어도 정보가 없다.</li>
+    <li>단점: 서버가 상태를 들고 있어야 하므로 서버가 여러 대면 세션 공유 인프라(Redis 등)가 필요하다. 모바일 앱이나 다른 도메인의 API 서버와는 쿠키 기반이 번거로울 수 있다.</li>
+  </ul>
+
+  <h3>3-2. 토큰(Token) 방식 — 클라이언트가 증명서를 들고 다닌다</h3>
+
+  <figure class="diagram">
+    <svg class="d anim" viewBox="0 0 900 350" role="img" aria-label="토큰 방식 순서 도면">
+      <rect class="box" x="165" y="14" width="170" height="36"/>
+      <text x="250" y="38" text-anchor="middle" class="strong">클라이언트</text>
+      <rect class="box" x="565" y="14" width="170" height="36"/>
+      <text x="650" y="38" text-anchor="middle" class="strong">서버</text>
+      <line class="life" x1="250" y1="50" x2="250" y2="335"/>
+      <line class="life" x1="650" y1="50" x2="650" y2="335"/>
+
+      <g class="msg" data-step="1">
+        <line class="arrow" x1="250" y1="95" x2="644" y2="95"/>
+        <text x="450" y="86" text-anchor="middle">1. ID / PW 로그인</text>
+      </g>
+      <g class="msg" data-step="2">
+        <line class="arrow ret" x1="650" y1="140" x2="256" y2="140"/>
+        <text x="450" y="131" text-anchor="middle">2. 서명된 JWT 발급 (서버는 저장 안 함)</text>
+      </g>
+      <g class="msg" data-step="3">
+        <line class="arrow" x1="250" y1="185" x2="644" y2="185"/>
+        <text x="450" y="176" text-anchor="middle">3. 요청 + Authorization: Bearer JWT</text>
+      </g>
+      <g class="msg" data-step="4">
+        <path class="arrow" d="M 650 220 C 740 220 740 262 656 262"/>
+        <text x="748" y="238" text-anchor="start" class="small">4. 저장소 조회 없이</text>
+        <text x="748" y="256" text-anchor="start" class="small">서명만 자체 검증</text>
+      </g>
+      <g class="msg" data-step="5">
+        <line class="arrow ret" x1="650" y1="305" x2="256" y2="305"/>
+        <text x="450" y="296" text-anchor="middle">5. 응답</text>
+      </g>
+    </svg>
+    <figcaption>도면 5. 토큰 방식 — 상태가 토큰 안에 들어 있어 서버는 아무것도 저장하지 않는다(stateless). 4번의 고리 화살표는 서버 내부에서 스스로 처리함을 뜻한다.</figcaption>
+  </figure>
+
+  <ul>
+    <li>장점: 서버가 상태를 저장하지 않아(stateless) 서버 확장(scale-out)이 쉽고, MSA에 잘 맞는다. 웹/모바일/타 서비스 어디서든 같은 방식으로 쓸 수 있다.</li>
+    <li>단점: 발급된 토큰은 만료 전까지 <strong>서버가 강제로 무효화하기 어렵다</strong>(5장의 Refresh Token 절에서 보완책을 다룬다). 토큰 자체에 정보가 들어 있어 유출 시 위험이 더 크다.</li>
+  </ul>
+
+  <table>
+    <tr><th></th><th>세션</th><th>토큰(JWT)</th></tr>
+    <tr><td>상태 저장</td><td>서버 (stateful)</td><td>클라이언트 (stateless)</td></tr>
+    <tr><td>서버 확장</td><td>세션 공유 인프라 필요</td><td>쉬움 — 서명 키만 공유</td></tr>
+    <tr><td>즉시 무효화</td><td>가능 (세션 삭제)</td><td>어려움 (만료까지 유효)</td></tr>
+    <tr><td>어울리는 구조</td><td>단일 서버 웹 서비스</td><td>MSA, 모바일 API, 서비스 간 통신</td></tr>
+  </table>
+</section>
+
+<!-- ============================================================ -->
+<section id="jwt">
+  <h2>4. JWT (JSON Web Token) 완전 해부</h2>
+  <p class="sub">토큰 방식에서 사실상 표준으로 쓰이는 토큰 형식.</p>
+
+  <h3>4-1. 구조: 점(.)으로 구분된 세 부분</h3>
+
+  <figure class="diagram">
+    <svg class="d" viewBox="0 0 900 330" role="img" aria-label="JWT 3단 구조 도면">
+      <text x="450" y="30" text-anchor="middle" class="small">eyJhbGciOiJIUzI1NiJ9 . eyJzdWIiOiI0MiIsInJvbGUiOiJVU0VSIn0 . SflKxwRJSMeKKF2QT4fw...</text>
+
+      <line class="arrow" x1="200" y1="42" x2="165" y2="78"/>
+      <line class="arrow" x1="450" y1="42" x2="450" y2="78"/>
+      <line class="arrow" x1="700" y1="42" x2="735" y2="78"/>
+
+      <rect class="box" x="40" y="85" width="250" height="180"/>
+      <rect class="boxdark" x="40" y="85" width="250" height="38"/>
+      <text x="165" y="110" text-anchor="middle" class="ondark strong">1. Header</text>
+      <text x="60" y="150" class="small">{</text>
+      <text x="76" y="172" class="small">"alg": "HS256",</text>
+      <text x="76" y="194" class="small">"typ": "JWT"</text>
+      <text x="60" y="216" class="small">}</text>
+      <text x="165" y="250" text-anchor="middle" class="small">서명 알고리즘 정보</text>
+
+      <rect class="box" x="325" y="85" width="250" height="180"/>
+      <rect class="boxdark" x="325" y="85" width="250" height="38"/>
+      <text x="450" y="110" text-anchor="middle" class="ondark strong">2. Payload</text>
+      <text x="345" y="146" class="small">{</text>
+      <text x="361" y="166" class="small">"sub": "42",       // 사용자 ID</text>
+      <text x="361" y="186" class="small">"role": "USER",  // 권한</text>
+      <text x="361" y="206" class="small">"iat": 1725342000,</text>
+      <text x="361" y="226" class="small">"exp": 1725345600  // 만료</text>
+      <text x="345" y="246" class="small">}</text>
+
+      <rect class="box" x="610" y="85" width="250" height="180"/>
+      <rect class="boxdark" x="610" y="85" width="250" height="38"/>
+      <text x="735" y="110" text-anchor="middle" class="ondark strong">3. Signature</text>
+      <text x="735" y="155" text-anchor="middle" class="small">HMAC-SHA256(</text>
+      <text x="735" y="177" text-anchor="middle" class="small">base64(1) + "." + base64(2),</text>
+      <text x="735" y="199" text-anchor="middle" class="small">비밀 키 )</text>
+      <text x="735" y="240" text-anchor="middle" class="small">위조 방지 서명</text>
+
+      <text x="165" y="300" text-anchor="middle" class="small">Base64 인코딩 (누구나 해독 가능)</text>
+      <text x="450" y="300" text-anchor="middle" class="small">Base64 인코딩 (누구나 해독 가능)</text>
+      <text x="735" y="300" text-anchor="middle" class="small">비밀 키 없이는 만들 수 없음</text>
+    </svg>
+    <figcaption>도면 6. JWT의 3단 구조. 앞의 두 부분은 단순 인코딩이라 누구나 읽을 수 있고, 마지막 서명만이 위조를 막는다.</figcaption>
+  </figure>
+
+  <h4>표준 클레임 (Registered Claims)</h4>
+  <ul>
+    <li><code>sub</code> (subject) — 사용자 식별자</li>
+    <li><code>iss</code> (issuer) — 토큰 발급자 (예: <code>https://auth.example.com</code>)</li>
+    <li><code>aud</code> (audience) — 토큰을 받을 대상 서비스</li>
+    <li><code>iat</code> (issued at) — 발급 시각</li>
+    <li><code>exp</code> (expiration) — 만료 시각. <strong>반드시 넣어야 한다.</strong></li>
+  </ul>
+
+  <div class="box">
+    <span class="tag-line">주의</span><br>
+    <strong>JWT는 암호화가 아니다.</strong> Header와 Payload는 그냥 Base64 인코딩일 뿐이라 누구나
+    <a href="https://jwt.io">jwt.io</a>에 붙여넣으면 내용을 볼 수 있다. JWT가 보장하는 것은 기밀성이 아니라
+    <strong>무결성(위조 불가)</strong>이다. 따라서 Payload에 비밀번호, 주민번호 같은 민감 정보를 절대 넣으면 안 된다.
+  </div>
+
+  <h3>4-2. 서명이 위조를 막는 원리</h3>
+
+  <figure class="diagram">
+    <svg class="d anim" viewBox="0 0 900 330" role="img" aria-label="토큰 위조 시도와 거부 도면">
+      <rect class="box" x="165" y="14" width="170" height="36"/>
+      <text x="250" y="38" text-anchor="middle" class="strong">공격자</text>
+      <rect class="box" x="565" y="14" width="170" height="36"/>
+      <text x="650" y="38" text-anchor="middle" class="strong">서버 (비밀 키 보유)</text>
+      <line class="life" x1="250" y1="50" x2="250" y2="315"/>
+      <line class="life" x1="650" y1="50" x2="650" y2="315"/>
+
+      <g class="msg" data-step="1">
+        <path class="arrow" d="M 250 85 C 160 85 160 127 244 127"/>
+        <text x="330" y="100" text-anchor="start" class="small">1. Payload의 "role": "USER"를</text>
+        <text x="330" y="118" text-anchor="start" class="small">"ADMIN"으로 변조 (서명은 그대로)</text>
+      </g>
+      <g class="msg" data-step="2">
+        <line class="arrow" x1="250" y1="170" x2="644" y2="170"/>
+        <text x="450" y="161" text-anchor="middle">2. 변조된 토큰 전송</text>
+      </g>
+      <g class="msg" data-step="3">
+        <path class="arrow" d="M 650 200 C 740 200 740 242 656 242"/>
+        <text x="893" y="212" text-anchor="end" class="small">3. 키로 다시 서명해 보니</text>
+        <text x="893" y="230" text-anchor="end" class="small">첨부된 서명과 불일치!</text>
+      </g>
+      <g class="msg" data-step="4">
+        <line class="arrow ret" x1="650" y1="285" x2="256" y2="285"/>
+        <text x="450" y="276" text-anchor="middle">4. 401 거부 — 위조 판정</text>
+      </g>
+    </svg>
+    <figcaption>도면 7. 내용을 바꾸면 서명이 맞지 않는다. 공격자는 비밀 키가 없으므로 올바른 서명을 새로 만들 수 없다.</figcaption>
+  </figure>
+
+  <h3>4-3. 서명 알고리즘: HS256 vs RS256</h3>
+  <table>
+    <tr><th></th><th>HS256 (대칭키)</th><th>RS256 (비대칭키)</th></tr>
+    <tr>
+      <td>키</td>
+      <td>하나의 비밀 키로 서명과 검증 모두</td>
+      <td><strong>개인키</strong>로 서명, <strong>공개키</strong>로 검증</td>
+    </tr>
+    <tr>
+      <td>키 공유</td>
+      <td>검증하는 모든 서버가 비밀 키를 알아야 함 — 서버가 많을수록 유출 위험 증가</td>
+      <td>공개키는 유출되어도 됨. 인증 서버만 개인키를 보관</td>
+    </tr>
+    <tr>
+      <td>어울리는 곳</td>
+      <td>단일 서비스</td>
+      <td>MSA, SSO — <strong>Keycloak이 기본으로 사용</strong></td>
+    </tr>
+  </table>
+  <p>RS256 구조에서는 각 마이크로서비스가 인증 서버의 <strong>JWKS 엔드포인트</strong>(공개키 목록, <code>/.well-known/jwks.json</code>)에서 공개키를 받아와 스스로 토큰을 검증한다. 인증 서버에 매번 물어볼 필요가 없다. (11장 도면 참고)</p>
+
+  <h3>4-4. JWT 관련 주요 공격과 방어</h3>
+  <ul>
+    <li><strong><code>alg: none</code> 공격</strong> — 헤더의 알고리즘을 <code>none</code>으로 바꿔 "서명 없음" 토큰을 보내는 고전 공격. 검증 라이브러리에서 허용 알고리즘을 명시적으로 고정해 방어한다.</li>
+    <li><strong>알고리즘 혼동 공격</strong> — RS256용 공개키를 HS256의 비밀 키인 척 사용하게 만드는 공격. 역시 알고리즘 고정으로 방어.</li>
+    <li><strong>약한 비밀 키</strong> — HS256 키가 짧으면 무차별 대입으로 키를 찾아내 마음대로 토큰을 발급할 수 있다. 256비트 이상 랜덤 키를 사용하고, 코드에 하드코딩하지 말고 환경변수/시크릿 관리 도구에 둔다.</li>
+    <li><strong>만료 미검증</strong> — <code>exp</code>를 검사하지 않으면 유출된 토큰이 영원히 유효하다. 라이브러리 기본 검증을 끄지 말 것.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="refresh">
+  <h2>5. Access Token / Refresh Token 전략</h2>
+  <p class="sub">"JWT는 무효화가 어렵다"는 약점과 "만료가 짧으면 자꾸 로그인해야 한다"는 불편함을 동시에 해결하는 표준 패턴.</p>
+
+  <h3>5-1. 두 토큰의 역할 분담</h3>
+  <table>
+    <tr><th></th><th>Access Token</th><th>Refresh Token</th></tr>
+    <tr><td>용도</td><td>API 요청 시 매번 첨부하는 실제 출입증</td><td>Access Token이 만료됐을 때 재발급 받는 용도로만 사용</td></tr>
+    <tr><td>수명</td><td><strong>짧게</strong> (5~30분)</td><td><strong>길게</strong> (수일~수주)</td></tr>
+    <tr><td>노출 빈도</td><td>모든 요청에 실려 다님 — 유출 가능성 상대적으로 높음</td><td>재발급 시에만 전송 — 노출 빈도 낮음</td></tr>
+    <tr><td>서버 저장</td><td>저장 안 함 (stateless)</td><td>보통 DB/Redis에 저장 — <strong>서버가 무효화 가능</strong></td></tr>
+  </table>
+
+  <h3>5-2. 전체 흐름</h3>
+
+  <figure class="diagram">
+    <svg class="d anim" viewBox="0 0 900 510" role="img" aria-label="Access와 Refresh 토큰 재발급 흐름 도면">
+      <rect class="box" x="95" y="14" width="170" height="36"/>
+      <text x="180" y="38" text-anchor="middle" class="strong">클라이언트</text>
+      <rect class="box" x="385" y="14" width="170" height="36"/>
+      <text x="470" y="38" text-anchor="middle" class="strong">자원 서버 (API)</text>
+      <rect class="box" x="665" y="14" width="170" height="36"/>
+      <text x="750" y="38" text-anchor="middle" class="strong">인증 서버</text>
+      <line class="life" x1="180" y1="50" x2="180" y2="495"/>
+      <line class="life" x1="470" y1="50" x2="470" y2="495"/>
+      <line class="life" x1="750" y1="50" x2="750" y2="495"/>
+
+      <g class="msg" data-step="1">
+        <line class="arrow" x1="180" y1="95" x2="744" y2="95"/>
+        <text x="465" y="86" text-anchor="middle">1. 로그인</text>
+      </g>
+      <g class="msg" data-step="2">
+        <line class="arrow ret" x1="750" y1="140" x2="186" y2="140"/>
+        <text x="465" y="131" text-anchor="middle">2. Access(30분) + Refresh(14일, 서버 DB에도 기록) 발급</text>
+      </g>
+      <g class="msg" data-step="3">
+        <line class="arrow" x1="180" y1="185" x2="464" y2="185"/>
+        <text x="325" y="176" text-anchor="middle">3. API 요청 (Access)</text>
+      </g>
+      <g class="msg" data-step="4">
+        <line class="arrow ret" x1="470" y1="230" x2="186" y2="230"/>
+        <text x="325" y="221" text-anchor="middle">4. 200 OK</text>
+      </g>
+      <g class="msg" data-step="5">
+        <line class="arrow" x1="180" y1="275" x2="464" y2="275"/>
+        <text x="325" y="266" text-anchor="middle">5. 30분 뒤 요청 (만료된 Access)</text>
+      </g>
+      <g class="msg" data-step="6">
+        <line class="arrow ret" x1="470" y1="320" x2="186" y2="320"/>
+        <text x="325" y="311" text-anchor="middle">6. 401 Unauthorized</text>
+      </g>
+      <g class="msg" data-step="7">
+        <line class="arrow" x1="180" y1="365" x2="744" y2="365"/>
+        <text x="465" y="356" text-anchor="middle">7. Refresh Token으로 재발급 요청 (사용자는 모름)</text>
+      </g>
+      <g class="msg" data-step="8">
+        <line class="arrow ret" x1="750" y1="410" x2="186" y2="410"/>
+        <text x="465" y="401" text-anchor="middle">8. 새 Access 발급 + Refresh도 새것으로 교체(Rotation)</text>
+      </g>
+      <g class="msg" data-step="9">
+        <line class="arrow" x1="180" y1="455" x2="464" y2="455"/>
+        <text x="325" y="446" text-anchor="middle">9. 새 Access로 재요청 — 성공</text>
+      </g>
+    </svg>
+    <figcaption>도면 8. Access Token 만료 시 Refresh Token으로 조용히 재발급 받는 흐름. 로그아웃이나 탈취 의심 시 서버가 DB의 Refresh Token을 지우면, 최대 Access Token 잔여 수명 안에 완전히 차단된다.</figcaption>
+  </figure>
+
+  <h3>5-3. 심화: Refresh Token Rotation</h3>
+  <p>재발급할 때마다 Refresh Token도 <strong>새것으로 교체</strong>하고 이전 것은 폐기하는 기법. 만약 폐기된 (구) Refresh Token이 사용되면 토큰이 탈취되어 두 곳에서 쓰이고 있다는 신호이므로, 해당 사용자의 모든 토큰을 즉시 무효화한다. Keycloak 등 대부분의 인증 서버가 지원한다.</p>
+
+  <div class="box">
+    <span class="tag-line">핵심</span><br>
+    "자주 쓰는 것은 짧게, 오래 쓰는 것은 서버가 통제 가능하게." — stateless의 장점(Access Token)과
+    stateful의 통제력(Refresh Token)을 절충한 설계다.
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="storage">
+  <h2>6. 토큰을 어디에 저장할까? — XSS와 CSRF</h2>
+  <p class="sub">프론트엔드에서 가장 자주 나오는 논쟁. 두 공격의 경로를 도면으로 이해해야 답을 고를 수 있다.</p>
+
+  <h3>6-1. XSS — 스크립트가 저장소를 턴다</h3>
+
+  <figure class="diagram">
+    <svg class="d anim" viewBox="0 0 900 210" role="img" aria-label="XSS 공격 경로 도면">
+      <rect class="box" x="30" y="60" width="220" height="80"/>
+      <text x="140" y="90" text-anchor="middle" class="strong">악성 스크립트</text>
+      <text x="140" y="112" text-anchor="middle" class="small">게시글에 심어진</text>
+      <text x="140" y="128" text-anchor="middle" class="small">&lt;script&gt; 코드</text>
+
+      <rect class="box" x="345" y="60" width="230" height="80"/>
+      <text x="460" y="90" text-anchor="middle" class="strong">사용자 브라우저</text>
+      <text x="460" y="112" text-anchor="middle" class="small">localStorage에 토큰 보관 중</text>
+      <text x="460" y="128" text-anchor="middle" class="small">(JS로 읽기 가능한 위치)</text>
+
+      <rect class="box" x="670" y="60" width="200" height="80"/>
+      <text x="770" y="90" text-anchor="middle" class="strong">공격자 서버</text>
+      <text x="770" y="115" text-anchor="middle" class="small">토큰 수신, 계정 장악</text>
+
+      <g class="msg" data-step="1">
+        <line class="arrow" x1="250" y1="100" x2="339" y2="100"/>
+        <text x="295" y="50" text-anchor="middle" class="small">1. 페이지에서 실행됨</text>
+      </g>
+      <g class="msg" data-step="2">
+        <line class="arrow" x1="575" y1="100" x2="664" y2="100"/>
+        <text x="620" y="50" text-anchor="middle" class="small">2. 토큰을 읽어 전송</text>
+      </g>
+      <text x="450" y="185" text-anchor="middle" class="small">방어: HttpOnly 쿠키(JS 접근 차단), 출력 이스케이프, CSP 헤더, innerHTML 계열 사용 자제</text>
+    </svg>
+    <figcaption>도면 9. XSS — 페이지에 심어진 스크립트는 JS가 접근 가능한 모든 것(localStorage 포함)을 훔칠 수 있다.</figcaption>
+  </figure>
+
+  <h3>6-2. CSRF — 쿠키가 자동으로 실려 나간다</h3>
+
+  <figure class="diagram">
+    <svg class="d anim" viewBox="0 0 900 210" role="img" aria-label="CSRF 공격 경로 도면">
+      <rect class="box" x="30" y="60" width="220" height="80"/>
+      <text x="140" y="90" text-anchor="middle" class="strong">악성 사이트</text>
+      <text x="140" y="112" text-anchor="middle" class="small">사용자가 무심코 방문한</text>
+      <text x="140" y="128" text-anchor="middle" class="small">evil.com 페이지</text>
+
+      <rect class="box" x="345" y="60" width="230" height="80"/>
+      <text x="460" y="90" text-anchor="middle" class="strong">사용자 브라우저</text>
+      <text x="460" y="112" text-anchor="middle" class="small">우리 서비스에 로그인된 상태</text>
+      <text x="460" y="128" text-anchor="middle" class="small">(세션 쿠키 보유)</text>
+
+      <rect class="box" x="670" y="60" width="200" height="80"/>
+      <text x="770" y="90" text-anchor="middle" class="strong">우리 서버</text>
+      <text x="770" y="112" text-anchor="middle" class="small">쿠키가 유효하므로</text>
+      <text x="770" y="128" text-anchor="middle" class="small">요청을 실행해 버림</text>
+
+      <g class="msg" data-step="1">
+        <line class="arrow" x1="250" y1="100" x2="339" y2="100"/>
+        <text x="295" y="50" text-anchor="middle" class="small">1. 숨은 요청 유발</text>
+      </g>
+      <g class="msg" data-step="2">
+        <line class="arrow" x1="575" y1="100" x2="664" y2="100"/>
+        <text x="620" y="40" text-anchor="middle" class="small">2. 브라우저가 쿠키를</text>
+        <text x="620" y="56" text-anchor="middle" class="small">자동으로 첨부해 전송</text>
+      </g>
+      <text x="450" y="185" text-anchor="middle" class="small">방어: SameSite 쿠키 속성, CSRF 토큰, 중요한 작업은 재인증 요구</text>
+    </svg>
+    <figcaption>도면 10. CSRF — 쿠키는 브라우저가 자동으로 실어 보내기 때문에, 사용자 몰래 보낸 요청도 서버 입장에서는 정상 요청처럼 보인다.</figcaption>
+  </figure>
+
+  <h3>6-3. 저장 위치별 비교</h3>
+  <table>
+    <tr><th>저장 위치</th><th>XSS에</th><th>CSRF에</th><th>비고</th></tr>
+    <tr>
+      <td><code>localStorage</code> / <code>sessionStorage</code></td>
+      <td>취약 — JS로 읽을 수 있음</td>
+      <td>안전 — 자동 전송 안 됨</td>
+      <td>구현이 간단해서 많이 쓰이지만 XSS 한 번에 토큰이 통째로 털린다</td>
+    </tr>
+    <tr>
+      <td><code>HttpOnly</code> 쿠키</td>
+      <td>안전 — JS가 읽기 불가</td>
+      <td>취약 — 자동 전송됨, 별도 방어 필요</td>
+      <td><code>SameSite</code> 속성 + CSRF 토큰으로 방어 가능</td>
+    </tr>
+    <tr>
+      <td>JS 메모리 (변수)</td>
+      <td>상대적 안전 — 새로고침하면 사라짐</td>
+      <td>안전</td>
+      <td>Access Token은 메모리, Refresh Token은 HttpOnly 쿠키에 두는 조합이 흔한 권장안</td>
+    </tr>
+  </table>
+
+  <h3>6-4. 안전한 쿠키 설정</h3>
+  <pre><code>Set-Cookie: refreshToken=xxx;
+    HttpOnly;          // JS에서 접근 불가 — XSS로 못 훔침
+    Secure;            // HTTPS에서만 전송
+    SameSite=Strict;   // 다른 사이트발 요청에는 안 실림 — CSRF 방어 (또는 Lax)
+    Path=/api/token;   // 재발급 엔드포인트에만 전송
+    Max-Age=1209600</code></pre>
+
+  <div class="box">
+    <span class="tag-line">권장 조합</span><br>
+    Access Token은 JS 메모리에만 보관(전역 변수/상태관리), Refresh Token은
+    <code>HttpOnly + Secure + SameSite</code> 쿠키에. 그리고 근본적으로 XSS 자체를 막는 것이 최우선이다:
+    출력 이스케이프, 프레임워크의 기본 방어(React의 JSX 등) 신뢰, <code>dangerouslySetInnerHTML</code> 지양,
+    CSP(Content-Security-Policy) 헤더 적용.
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="oauth">
+  <h2>7. OAuth 2.0 — 비밀번호를 주지 않고 권한만 위임</h2>
+  <p class="sub">"구글로 로그인", "카카오로 로그인" 버튼 뒤에서 일어나는 일. SSO와 Keycloak을 이해하기 위한 필수 배경지식.</p>
+
+  <h3>7-1. 어떤 문제를 풀려는 것인가</h3>
+  <p>어떤 앱이 "내 구글 캘린더를 읽고 싶다"고 할 때, 내 구글 비밀번호를 그 앱에 알려주는 것은 재앙이다(전체 계정 장악, 회수 불가). OAuth 2.0은 <strong>비밀번호 대신, 범위와 기한이 제한된 출입증(Access Token)을 발급해 주는 권한 위임 프레임워크</strong>다.</p>
+
+  <h3>7-2. 등장인물 4명</h3>
+  <table>
+    <tr><th>역할</th><th>의미</th><th>"구글 로그인" 예시</th></tr>
+    <tr><td>Resource Owner</td><td>자원의 주인 = 사용자</td><td>나</td></tr>
+    <tr><td>Client</td><td>권한을 위임받으려는 앱</td><td>내가 만든 웹 서비스</td></tr>
+    <tr><td>Authorization Server</td><td>인증하고 토큰을 발급하는 서버</td><td>구글 로그인 서버 (또는 <strong>Keycloak</strong>)</td></tr>
+    <tr><td>Resource Server</td><td>보호된 자원을 가진 API 서버</td><td>구글 캘린더 API</td></tr>
+  </table>
+
+  <h3>7-3. Authorization Code Grant — 표준 흐름</h3>
+  <p>여러 흐름(Grant) 중 웹에서 쓰는 표준. <strong>이 순서는 면접에도 자주 나오니 흐름째로 이해해 두자.</strong></p>
+
+  <figure class="diagram">
+    <svg class="d anim" viewBox="0 0 900 510" role="img" aria-label="OAuth 2.0 Authorization Code 흐름 도면">
+      <rect class="box" x="30" y="14" width="160" height="36"/>
+      <text x="110" y="38" text-anchor="middle" class="strong">사용자 브라우저</text>
+      <rect class="box" x="270" y="14" width="160" height="36"/>
+      <text x="350" y="38" text-anchor="middle" class="strong">클라이언트 앱</text>
+      <rect class="box" x="530" y="14" width="160" height="36"/>
+      <text x="610" y="38" text-anchor="middle" class="strong">인증 서버</text>
+      <rect class="box" x="740" y="14" width="150" height="36"/>
+      <text x="815" y="38" text-anchor="middle" class="strong">자원 서버</text>
+      <line class="life" x1="110" y1="50" x2="110" y2="495"/>
+      <line class="life" x1="350" y1="50" x2="350" y2="495"/>
+      <line class="life" x1="610" y1="50" x2="610" y2="495"/>
+      <line class="life" x1="815" y1="50" x2="815" y2="495"/>
+
+      <g class="msg" data-step="1">
+        <line class="arrow" x1="110" y1="95" x2="344" y2="95"/>
+        <text x="230" y="86" text-anchor="middle" class="small">1. "구글로 로그인" 클릭</text>
+      </g>
+      <g class="msg" data-step="2">
+        <line class="arrow ret" x1="350" y1="140" x2="116" y2="140"/>
+        <text x="230" y="131" text-anchor="middle" class="small">2. 인증 서버로 리다이렉트(302)</text>
+      </g>
+      <g class="msg" data-step="3">
+        <line class="arrow" x1="110" y1="185" x2="604" y2="185"/>
+        <text x="357" y="176" text-anchor="middle" class="small">3. 로그인 + 동의 — 비밀번호는 인증 서버에만 입력된다</text>
+      </g>
+      <g class="msg" data-step="4">
+        <line class="arrow ret" x1="610" y1="230" x2="116" y2="230"/>
+        <text x="357" y="221" text-anchor="middle" class="small">4. 일회용 Authorization Code와 함께 리다이렉트</text>
+      </g>
+      <g class="msg" data-step="5">
+        <line class="arrow" x1="110" y1="275" x2="344" y2="275"/>
+        <text x="230" y="266" text-anchor="middle" class="small">5. code 전달</text>
+      </g>
+      <g class="msg" data-step="6">
+        <line class="arrow" x1="350" y1="320" x2="604" y2="320"/>
+        <text x="480" y="311" text-anchor="middle" class="small">6. code + client_secret 제출 (백채널: 서버끼리 직접)</text>
+      </g>
+      <g class="msg" data-step="7">
+        <line class="arrow ret" x1="610" y1="365" x2="356" y2="365"/>
+        <text x="480" y="356" text-anchor="middle" class="small">7. Access Token 발급</text>
+      </g>
+      <g class="msg" data-step="8">
+        <line class="arrow" x1="350" y1="410" x2="809" y2="410"/>
+        <text x="580" y="401" text-anchor="middle" class="small">8. Bearer 토큰으로 API 호출</text>
+      </g>
+      <g class="msg" data-step="9">
+        <line class="arrow ret" x1="815" y1="455" x2="356" y2="455"/>
+        <text x="580" y="446" text-anchor="middle" class="small">9. 보호된 자원 응답</text>
+      </g>
+    </svg>
+    <figcaption>도면 11. Authorization Code Grant. 브라우저를 지나는 앞 구간(1~5)에는 노출되어도 되는 일회용 code만 흐르고, 진짜 토큰은 서버 간 직접 통신(6~7)으로만 전달된다.</figcaption>
+  </figure>
+
+  <h4>왜 코드를 거쳐 두 단계로 나눌까?</h4>
+  <ul>
+    <li>4번의 리다이렉트는 브라우저 주소창을 지나므로 노출 위험이 있다. 그래서 노출되어도 되는 <strong>일회용 코드</strong>만 전달한다.</li>
+    <li>진짜 토큰은 6~7번에서 <strong>서버 간 통신(back channel)</strong>으로만 전달되고, <code>client_secret</code>을 아는 진짜 Client만 교환할 수 있다.</li>
+    <li><code>state</code> 파라미터 — 요청 시 보낸 랜덤값이 그대로 돌아오는지 확인해 CSRF를 방어한다.</li>
+    <li><strong>PKCE</strong> — client_secret을 숨길 수 없는 SPA/모바일 앱을 위한 확장. 요청마다 임시 비밀값(code_verifier)을 만들어 코드 탈취 공격을 막는다. 현재는 모든 클라이언트에 권장.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="oidc">
+  <h2>8. OIDC (OpenID Connect) — OAuth 위에 얹은 인증</h2>
+  <p class="sub">OAuth 2.0은 원래 인가(권한 위임) 프레임워크인데, 다들 이것을 로그인에 쓰고 싶어 했다. 그래서 표준화된 것이 OIDC.</p>
+
+  <ul>
+    <li><strong>OAuth 2.0</strong> = "이 앱이 내 캘린더에 접근해도 됨" (인가) — 사용자가 <em>누구인지</em>는 표준으로 알려주지 않는다.</li>
+    <li><strong>OIDC</strong> = OAuth 2.0 + <strong>ID Token</strong> — "이 사용자는 누구다"를 표준 방식으로 알려주는 인증 계층.</li>
+  </ul>
+
+  <figure class="diagram">
+    <svg class="d anim" viewBox="0 0 900 260" role="img" aria-label="OIDC의 두 토큰 도면">
+      <rect class="box" x="40" y="80" width="220" height="90"/>
+      <text x="150" y="115" text-anchor="middle" class="strong">인증 서버 (OIDC)</text>
+      <text x="150" y="140" text-anchor="middle" class="small">Keycloak, 구글 등</text>
+
+      <rect class="box" x="560" y="30" width="300" height="80"/>
+      <text x="710" y="60" text-anchor="middle" class="strong">클라이언트 앱이 읽음</text>
+      <text x="710" y="85" text-anchor="middle" class="small">"이 사용자는 누구다" — 로그인 처리</text>
+
+      <rect class="box" x="560" y="150" width="300" height="80"/>
+      <text x="710" y="180" text-anchor="middle" class="strong">API 서버가 검증</text>
+      <text x="710" y="205" text-anchor="middle" class="small">"이 요청은 권한이 있다" — 접근 허가</text>
+
+      <g class="msg" data-step="1">
+        <line class="arrow" x1="260" y1="105" x2="554" y2="72"/>
+        <text x="400" y="55" text-anchor="middle">1. ID Token (JWT)</text>
+      </g>
+      <g class="msg" data-step="2">
+        <line class="arrow" x1="260" y1="145" x2="554" y2="185"/>
+        <text x="400" y="215" text-anchor="middle">2. Access Token</text>
+      </g>
+    </svg>
+    <figcaption>도면 12. OIDC 로그인 시 두 종류의 토큰이 함께 발급된다. ID Token은 인증(누구인가), Access Token은 인가(무엇을 할 수 있는가)를 담당한다.</figcaption>
+  </figure>
+
+  <h3>ID Token의 내용</h3>
+  <pre><code>{
+  "iss": "https://keycloak.example.com/realms/myrealm",   // 발급자
+  "sub": "f81d4fae-7dec-...",                             // 사용자 고유 ID
+  "aud": "my-web-app",                                    // 이 토큰의 대상 클라이언트
+  "email": "user@example.com",
+  "name": "홍길동",
+  "exp": 1725345600,
+  "nonce": "요청 시 보낸 랜덤값"                            // 리플레이 공격 방어
+}</code></pre>
+  <p>"구글/카카오로 로그인"은 사실 OIDC(또는 그 유사 구현)이고, <strong>Keycloak도 OIDC 표준을 구현한 서버</strong>다. OIDC를 지원하는 서버는 <code>/.well-known/openid-configuration</code> 주소에서 모든 엔드포인트 정보를 자동으로 알려준다(Discovery).</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="sso">
+  <h2>9. SSO (Single Sign-On) — 한 번 로그인으로 모든 서비스</h2>
+  <p class="sub">구글에 한 번 로그인하면 Gmail, YouTube, Drive에 다시 로그인하지 않아도 되는 것. 그 원리.</p>
+
+  <h3>9-1. 개념</h3>
+  <p>SSO는 <strong>인증을 각 서비스에서 떼어내 중앙의 인증 서버(IdP)에 모으는 구조</strong>다.</p>
+  <ul>
+    <li><strong>IdP (Identity Provider):</strong> 인증을 전담하는 서버. 사용자 계정과 로그인 세션을 여기서만 관리한다. (예: 구글 계정, 회사의 Keycloak)</li>
+    <li><strong>SP (Service Provider):</strong> 인증을 IdP에 맡기는 개별 서비스들. (예: Gmail, YouTube / 우리 회사의 서비스 A, B, C)</li>
+  </ul>
+
+  <h3>9-2. 동작 원리 — 핵심은 "IdP의 세션 쿠키"</h3>
+
+  <figure class="diagram">
+    <svg class="d anim" viewBox="0 0 900 640" role="img" aria-label="SSO 동작 순서 도면">
+      <rect class="box" x="30" y="14" width="160" height="36"/>
+      <text x="110" y="38" text-anchor="middle" class="strong">브라우저</text>
+      <rect class="box" x="270" y="14" width="160" height="36"/>
+      <text x="350" y="38" text-anchor="middle" class="strong">서비스 A</text>
+      <rect class="box" x="510" y="14" width="160" height="36"/>
+      <text x="590" y="38" text-anchor="middle" class="strong">서비스 B</text>
+      <rect class="box" x="720" y="14" width="160" height="36"/>
+      <text x="800" y="38" text-anchor="middle" class="strong">IdP (Keycloak)</text>
+      <line class="life" x1="110" y1="50" x2="110" y2="625"/>
+      <line class="life" x1="350" y1="50" x2="350" y2="625"/>
+      <line class="life" x1="590" y1="50" x2="590" y2="625"/>
+      <line class="life" x1="800" y1="50" x2="800" y2="625"/>
+
+      <g class="msg" data-step="1">
+        <line class="arrow" x1="110" y1="90" x2="344" y2="90"/>
+        <text x="230" y="81" text-anchor="middle" class="small">1. 서비스 A 접속</text>
+      </g>
+      <g class="msg" data-step="2">
+        <line class="arrow ret" x1="350" y1="132" x2="116" y2="132"/>
+        <text x="230" y="123" text-anchor="middle" class="small">2. 미로그인 — IdP로 리다이렉트</text>
+      </g>
+      <g class="msg" data-step="3">
+        <line class="arrow" x1="110" y1="174" x2="794" y2="174"/>
+        <text x="450" y="165" text-anchor="middle" class="small">3. IdP에서 로그인 (ID/PW + MFA)</text>
+      </g>
+      <g class="msg" data-step="4">
+        <path class="arrow" d="M 800 205 C 880 205 880 243 806 243"/>
+        <text x="792" y="220" text-anchor="end" class="small strong">4. IdP 도메인에 세션 쿠키 생성 — SSO의 심장</text>
+      </g>
+      <g class="msg" data-step="5">
+        <line class="arrow ret" x1="800" y1="285" x2="116" y2="285"/>
+        <text x="450" y="276" text-anchor="middle" class="small">5. 토큰(OIDC)과 함께 서비스 A로 리다이렉트</text>
+      </g>
+      <g class="msg" data-step="6">
+        <line class="arrow" x1="110" y1="327" x2="344" y2="327"/>
+        <text x="230" y="318" text-anchor="middle" class="small">6. 토큰 전달 — A 로그인 완료</text>
+      </g>
+
+      <g class="msg" data-step="7">
+        <line class="arrow" x1="110" y1="380" x2="584" y2="380"/>
+        <text x="345" y="371" text-anchor="middle" class="small">7. 이번엔 서비스 B 접속</text>
+      </g>
+      <g class="msg" data-step="8">
+        <line class="arrow ret" x1="590" y1="422" x2="116" y2="422"/>
+        <text x="345" y="413" text-anchor="middle" class="small">8. 미로그인 — IdP로 리다이렉트</text>
+      </g>
+      <g class="msg" data-step="9">
+        <line class="arrow" x1="110" y1="464" x2="794" y2="464"/>
+        <text x="450" y="455" text-anchor="middle" class="small">9. IdP 접근 — 세션 쿠키가 자동으로 첨부됨</text>
+      </g>
+      <g class="msg" data-step="10">
+        <path class="arrow" d="M 800 495 C 880 495 880 533 806 533"/>
+        <text x="792" y="510" text-anchor="end" class="small strong">10. 세션 확인 — 로그인 화면 생략!</text>
+      </g>
+      <g class="msg" data-step="11">
+        <line class="arrow ret" x1="800" y1="575" x2="116" y2="575"/>
+        <text x="450" y="566" text-anchor="middle" class="small">11. 즉시 토큰 발급 — B 자동 로그인</text>
+      </g>
+    </svg>
+    <figcaption>도면 13. SSO의 실체 — 서비스마다 인증 흐름은 매번 돌지만, IdP의 세션 쿠키 덕분에 두 번째부터는 로그인 화면(3번 단계)이 생략된다.</figcaption>
+  </figure>
+
+  <p>즉 사용자 입장에서 "한 번만 로그인"으로 보이지만, 실제로는 서비스마다 인증 흐름이 돌고 있고, IdP에서의 로그인 단계만 세션 덕분에 생략되는 것이다.</p>
+
+  <h3>9-3. SSO 프로토콜 두 계열</h3>
+  <table>
+    <tr><th></th><th>OIDC (OpenID Connect)</th><th>SAML 2.0</th></tr>
+    <tr><td>기반/형식</td><td>OAuth 2.0 + JSON/JWT</td><td>XML</td></tr>
+    <tr><td>시대</td><td>모던 웹/모바일 표준</td><td>2005년~, 기업 환경에 여전히 많음</td></tr>
+    <tr><td>주 사용처</td><td>신규 서비스, API, 모바일</td><td>사내 그룹웨어, 레거시 엔터프라이즈 연동</td></tr>
+  </table>
+  <p><strong>Keycloak은 둘 다 지원</strong>하므로 신규 서비스는 OIDC로, 레거시는 SAML로 하나의 IdP에 붙일 수 있다.</p>
+
+  <h3>9-4. SSO의 장단점</h3>
+  <ul>
+    <li>장점: 사용자 경험 향상. 비밀번호가 IdP 한 곳에만 존재하며 각 서비스는 비밀번호를 아예 저장하지 않는다. 중앙에서 계정 잠금/2단계 인증/정책을 일괄 적용하고, 퇴사자 계정을 한 번에 차단할 수 있다.</li>
+    <li>단점: IdP가 <strong>단일 장애점(SPOF)</strong>이다. IdP가 죽으면 전 서비스 로그인 불가, IdP 계정이 털리면 전 서비스가 털린다. 그래서 IdP에는 반드시 <strong>MFA(다중 인증)</strong>를 건다.</li>
+    <li><strong>Single Logout(SLO)</strong> — 로그아웃 전파는 의외로 어려운 문제다. 각 서비스에 이미 발급된 토큰이 남아 있기 때문. OIDC의 Back-Channel Logout 등으로 해결한다.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="keycloak">
+  <h2>10. Keycloak — 오픈소스 인증 서버</h2>
+  <p class="sub">지금까지 배운 것(비밀번호 해시, JWT, OAuth 2.0, OIDC, SAML, SSO, MFA)을 전부 구현해 놓은 완성품. Red Hat이 주도하는 오픈소스로, 직접 만들면 몇 달 걸릴 인증 서버를 설치만으로 얻는다.</p>
+
+  <h3>10-1. 내부 구조</h3>
+
+  <figure class="diagram">
+    <svg class="d" viewBox="0 0 900 430" role="img" aria-label="Keycloak Realm 구조 도면">
+      <!-- Keycloak 외곽 -->
+      <rect class="box" x="20" y="20" width="640" height="390"/>
+      <text x="40" y="50" class="strong" font-size="16">Keycloak 서버</text>
+
+      <!-- master realm -->
+      <rect class="boxsoft" x="40" y="70" width="280" height="60"/>
+      <text x="180" y="95" text-anchor="middle">Realm: master</text>
+      <text x="180" y="115" text-anchor="middle" class="small">관리 전용 — 서비스에 쓰지 말 것</text>
+
+      <!-- my realm -->
+      <rect class="box" x="40" y="150" width="600" height="240"/>
+      <text x="60" y="180" class="strong">Realm: my-service (격리된 인증 공간)</text>
+
+      <rect class="boxsoft" x="60" y="200" width="170" height="76"/>
+      <text x="145" y="226" text-anchor="middle">Users / Groups</text>
+      <text x="145" y="248" text-anchor="middle" class="small">계정, 비밀번호 해시,</text>
+      <text x="145" y="264" text-anchor="middle" class="small">MFA 설정</text>
+
+      <rect class="boxsoft" x="250" y="200" width="170" height="76"/>
+      <text x="335" y="226" text-anchor="middle">Clients</text>
+      <text x="335" y="248" text-anchor="middle" class="small">React 프론트,</text>
+      <text x="335" y="264" text-anchor="middle" class="small">Spring 백엔드 ...</text>
+
+      <rect class="boxsoft" x="440" y="200" width="180" height="76"/>
+      <text x="530" y="226" text-anchor="middle">Roles / Scopes</text>
+      <text x="530" y="248" text-anchor="middle" class="small">ADMIN, USER ...</text>
+      <text x="530" y="264" text-anchor="middle" class="small">토큰 클레임 구성</text>
+
+      <rect class="boxsoft" x="60" y="296" width="360" height="76"/>
+      <text x="240" y="322" text-anchor="middle">Identity Providers (소셜 로그인 중개)</text>
+      <text x="240" y="344" text-anchor="middle" class="small">구글 / 카카오 / GitHub / 타사 SAML IdP 연결</text>
+
+      <rect class="boxsoft" x="440" y="296" width="180" height="76"/>
+      <text x="530" y="322" text-anchor="middle">User Federation</text>
+      <text x="530" y="344" text-anchor="middle" class="small">LDAP / AD 연동</text>
+
+      <!-- 외부 -->
+      <rect class="box" x="710" y="70" width="170" height="70"/>
+      <text x="795" y="98" text-anchor="middle">관리 콘솔</text>
+      <text x="795" y="120" text-anchor="middle" class="small">+ Admin REST API</text>
+
+      <rect class="box" x="710" y="180" width="170" height="90"/>
+      <text x="795" y="208" text-anchor="middle">OIDC 엔드포인트</text>
+      <text x="795" y="230" text-anchor="middle" class="small">.well-known/…</text>
+      <text x="795" y="250" text-anchor="middle" class="small">JWKS 공개키</text>
+
+      <rect class="box" x="710" y="310" width="170" height="70"/>
+      <text x="795" y="338" text-anchor="middle">로그인 화면</text>
+      <text x="795" y="360" text-anchor="middle" class="small">테마 커스텀 가능</text>
+
+      <line class="arrow" x1="660" y1="105" x2="704" y2="105"/>
+      <line class="arrow" x1="660" y1="225" x2="704" y2="225"/>
+      <line class="arrow" x1="660" y1="345" x2="704" y2="345"/>
+    </svg>
+    <figcaption>도면 14. Keycloak의 구성 — Realm 단위로 완전히 격리되며, 하나의 Realm 안에 사용자/클라이언트/역할/소셜 로그인 중개가 들어간다.</figcaption>
+  </figure>
+
+  <h3>10-2. 핵심 개념(용어)</h3>
+  <table>
+    <tr><th>개념</th><th>설명</th></tr>
+    <tr><td><strong>Realm</strong> (렐름)</td><td>완전히 격리된 인증 공간. 사용자/클라이언트/설정이 렐름 단위로 분리된다. 보통 서비스(혹은 회사)당 하나. 관리용 <code>master</code> 렐름은 건드리지 말고 새로 만든다.</td></tr>
+    <tr><td><strong>Client</strong></td><td>Keycloak에 인증을 맡기는 앱 하나하나 (React 프론트, Spring 백엔드 등). OAuth의 Client와 같은 의미.</td></tr>
+    <tr><td><strong>Client Scope</strong></td><td>토큰에 어떤 클레임을 담을지 정의하는 묶음.</td></tr>
+    <tr><td><strong>Role</strong></td><td>인가용 권한. Realm Role(전역)과 Client Role(특정 앱 한정)이 있고, JWT의 클레임으로 들어간다.</td></tr>
+    <tr><td><strong>Group</strong></td><td>사용자 묶음. 그룹에 Role을 부여해 일괄 관리.</td></tr>
+    <tr><td><strong>Identity Provider</strong></td><td>외부 로그인 중개 설정 (구글, 카카오, 다른 SAML IdP 등).</td></tr>
+  </table>
+
+  <h3>10-3. 빠르게 띄워보기 (Docker)</h3>
+  <pre><code>docker run -p 8080:8080 \
+  -e KC_BOOTSTRAP_ADMIN_USERNAME=admin \
+  -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
+  quay.io/keycloak/keycloak:latest start-dev
+
+# http://localhost:8080 관리 콘솔 접속 후
+# 1) Realm 생성 (예: my-realm)
+# 2) Client 생성 (예: my-frontend, redirect URI 등록)
+# 3) User 생성 — 이 흐름만으로 OIDC 로그인이 동작한다</code></pre>
+  <p>OIDC 설정 정보는 여기서 자동 제공된다:</p>
+  <pre><code>http://localhost:8080/realms/my-realm/.well-known/openid-configuration   # Discovery 문서
+http://localhost:8080/realms/my-realm/protocol/openid-connect/certs      # JWKS (공개키)</code></pre>
+
+  <h3>10-4. 백엔드 연동 예시 (Spring Boot Resource Server)</h3>
+  <p>백엔드는 Keycloak에게 물어볼 필요 없이, 공개키로 JWT를 <strong>스스로 검증</strong>한다. 설정은 놀랄 만큼 짧다:</p>
+  <pre><code># application.yml
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/my-realm
+          # 이 한 줄로 JWKS 공개키를 자동으로 받아와 서명/만료/발급자를 검증한다</code></pre>
+  <pre><code>// 인가(Role 검사) 예시
+http.authorizeHttpRequests(auth -> auth
+    .requestMatchers("/admin/**").hasRole("ADMIN")   // JWT의 role 클레임 기반
+    .anyRequest().authenticated());</code></pre>
+  <p>프론트엔드(React/Vue)는 <code>keycloak-js</code> 또는 표준 <code>oidc-client-ts</code> 라이브러리로 로그인 리다이렉트와 토큰 갱신을 처리한다.</p>
+
+  <h3>10-5. 직접 구현 vs Keycloak, 언제 무엇을?</h3>
+  <table>
+    <tr><th>직접 구현 (JWT 발급 코드 작성)</th><th>Keycloak 도입</th></tr>
+    <tr>
+      <td>학습 목적, 소규모 단일 서비스, 요구사항이 단순할 때. <strong>인증 원리를 이해하려면 한 번은 직접 만들어 보는 것을 강력 추천.</strong></td>
+      <td>서비스가 여러 개(SSO 필요), 소셜 로그인 + MFA + 계정관리까지 필요, MSA 환경, 기업 LDAP 연동. 인증 코드의 버그는 곧 보안사고이므로 검증된 구현을 쓰는 가치가 크다.</td>
+    </tr>
+  </table>
+  <p>유사한 대안: Auth0, AWS Cognito, Firebase Auth(관리형 서비스), Authentik, Ory(오픈소스). Keycloak은 그중 "직접 호스팅하는 오픈소스" 진영의 사실상 표준이다.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="msa">
+  <h2>11. MSA 환경에서의 인증 구조</h2>
+  <p class="sub">마이크로서비스에서 "누가 검증하느냐"를 정리하면 지금까지의 개념이 하나로 연결된다.</p>
+
+  <figure class="diagram">
+    <svg class="d anim" viewBox="0 0 960 470" role="img" aria-label="MSA 인증 아키텍처 도면">
+      <!-- 노드 -->
+      <rect class="box" x="30" y="150" width="150" height="70"/>
+      <text x="105" y="180" text-anchor="middle" class="strong">브라우저 / 앱</text>
+      <text x="105" y="202" text-anchor="middle" class="small">JWT 보유</text>
+
+      <rect class="box" x="300" y="150" width="170" height="70"/>
+      <text x="385" y="180" text-anchor="middle" class="strong">API Gateway</text>
+      <text x="385" y="202" text-anchor="middle" class="small">서명·만료 1차 검증</text>
+
+      <rect class="box" x="620" y="40" width="180" height="60"/>
+      <text x="710" y="65" text-anchor="middle" class="strong">서비스 A: 회원</text>
+      <text x="710" y="86" text-anchor="middle" class="small">자체 검증 + 인가</text>
+      <rect class="box" x="620" y="155" width="180" height="60"/>
+      <text x="710" y="180" text-anchor="middle" class="strong">서비스 B: 강의</text>
+      <text x="710" y="201" text-anchor="middle" class="small">자체 검증 + 인가</text>
+      <rect class="box" x="620" y="270" width="180" height="60"/>
+      <text x="710" y="295" text-anchor="middle" class="strong">서비스 C: 결제</text>
+      <text x="710" y="316" text-anchor="middle" class="small">자체 검증 + 인가</text>
+
+      <rect class="boxdark" x="270" y="370" width="230" height="70"/>
+      <text x="385" y="399" text-anchor="middle" class="ondark strong">Keycloak (IdP)</text>
+      <text x="385" y="421" text-anchor="middle" class="ondark" font-size="13">인증 전담 — RS256 개인키 보관</text>
+
+      <!-- 정적 연결: JWKS -->
+      <g class="static">
+        <path class="blocked" d="M 620 90 C 540 90 520 330 500 375" />
+        <path class="blocked" d="M 620 195 C 560 200 530 320 495 370" />
+        <path class="blocked" d="M 620 300 C 570 310 540 350 505 372" />
+        <text x="545" y="400" text-anchor="start" class="small">JWKS 공개키 받아 캐시</text>
+        <text x="545" y="418" text-anchor="start" class="small">(매 요청 문의 없음)</text>
+      </g>
+
+      <!-- 흐름 -->
+      <g class="msg" data-step="1">
+        <path class="arrow" d="M 105 220 C 105 330 200 395 264 402"/>
+        <text x="140" y="295" text-anchor="start" class="small">1. 로그인은 IdP에서</text>
+        <text x="140" y="313" text-anchor="start" class="small">JWT(RS256) 수령</text>
+      </g>
+      <g class="msg" data-step="2">
+        <line class="arrow" x1="180" y1="185" x2="294" y2="185"/>
+        <text x="237" y="140" text-anchor="middle" class="small">2. Bearer JWT</text>
+      </g>
+      <g class="msg" data-step="3">
+        <line class="arrow" x1="470" y1="170" x2="614" y2="80"/>
+        <text x="540" y="105" text-anchor="middle" class="small">3. 라우팅</text>
+      </g>
+      <g class="msg" data-step="4">
+        <line class="arrow" x1="470" y1="185" x2="614" y2="185"/>
+        <text x="543" y="176" text-anchor="middle" class="small">4. 라우팅</text>
+      </g>
+      <g class="msg" data-step="5">
+        <line class="arrow" x1="470" y1="200" x2="614" y2="290"/>
+        <text x="540" y="270" text-anchor="middle" class="small">5. 라우팅</text>
+      </g>
+      <g class="msg" data-step="6">
+        <path class="arrow" d="M 730 330 C 730 398 806 398 790 336"/>
+        <text x="800" y="440" text-anchor="middle" class="small">6. 각 서비스가 스스로 재검증</text>
+      </g>
+    </svg>
+    <figcaption>도면 15. MSA 인증 구조 — 각 서비스는 Keycloak의 JWKS 공개키(점선)를 미리 받아 두고, 요청마다 스스로 JWT를 검증한다(Zero Trust). 인증 서버에는 부하가 가지 않는다.</figcaption>
+  </figure>
+
+  <ul>
+    <li><strong>왜 JWT + RS256인가:</strong> 서비스가 10개여도 인증 서버에 매 요청 물어보지 않는다. 공개키로 각자 검증하므로 인증 서버 부하가 없고, 서비스 간 결합도가 낮다.</li>
+    <li><strong>서비스 간 통신 인증:</strong> 사용자 없이 서비스끼리 호출할 때는 OAuth의 <code>Client Credentials Grant</code>로 서비스 전용 토큰을 발급받는다.</li>
+    <li><strong>사용자 컨텍스트 전파:</strong> A가 B를 호출할 때 받은 JWT를 그대로 전달하거나(Token Relay), 필요한 클레임만 내부 헤더로 전달한다.</li>
+    <li><strong>게이트웨이에서 끝내지 말 것:</strong> 게이트웨이만 검증하고 내부 서비스는 무방비면, 내부망에 침투한 공격자에게 전부 뚫린다. 각 서비스가 스스로 검증하는 것이 Zero Trust 원칙이다.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="checklist">
+  <h2>12. 실전 보안 체크리스트</h2>
+  <p class="sub">로그인/회원가입 기능을 구현하거나 리뷰할 때 하나씩 점검해 보자.</p>
+
+  <h3>회원가입/비밀번호</h3>
+  <ul>
+    <li>bcrypt/Argon2로 해시 저장 (평문·MD5·SHA 단독 금지)</li>
+    <li>모든 구간 HTTPS</li>
+    <li>로그인 실패 메시지 통일 ("아이디 또는 비밀번호가 올바르지 않습니다")</li>
+    <li>로그인 시도 제한 / 계정 잠금 / 캡차</li>
+    <li>SQL Injection 방어 (Prepared Statement / ORM)</li>
+    <li>비밀번호 재설정은 만료되는 일회용 토큰 링크로</li>
+  </ul>
+
+  <h3>JWT/토큰</h3>
+  <ul>
+    <li>Payload에 민감 정보 넣지 않기 (JWT는 누구나 읽을 수 있다)</li>
+    <li><code>exp</code> 필수, Access Token 수명 짧게 (5~30분)</li>
+    <li>Refresh Token은 서버 저장 + 무효화 가능 + Rotation</li>
+    <li>서명 키는 환경변수/시크릿 관리, 충분히 길게. 알고리즘 명시적 고정 (<code>alg: none</code> 방어)</li>
+    <li>MSA/SSO라면 RS256 + JWKS</li>
+    <li>Refresh Token은 <code>HttpOnly + Secure + SameSite</code> 쿠키에</li>
+  </ul>
+
+  <h3>프론트엔드</h3>
+  <ul>
+    <li>XSS 방어: 출력 이스케이프, CSP 헤더, <code>innerHTML</code> 계열 사용 자제</li>
+    <li>CSRF 방어: SameSite 쿠키 + CSRF 토큰 (쿠키 기반 인증일 때)</li>
+    <li>토큰을 URL 쿼리스트링에 넣지 않기 (로그와 방문 기록에 남는다)</li>
+  </ul>
+
+  <h3>운영/구조</h3>
+  <ul>
+    <li>관리자 계정에 MFA</li>
+    <li>IdP(Keycloak) 이중화 — SSO는 단일 장애점이 된다</li>
+    <li>비밀번호·토큰을 로그에 남기지 않기</li>
+    <li>의존성 취약점 점검 (인증 라이브러리 버전 업데이트)</li>
+  </ul>
+
+  <hr class="divider">
+
+  <h3>더 공부할 키워드</h3>
+  <p>
+    <span class="kw">PKCE</span>
+    <span class="kw">JWKS</span>
+    <span class="kw">Refresh Token Rotation</span>
+    <span class="kw">SAML 2.0</span>
+    <span class="kw">SCIM</span>
+    <span class="kw">WebAuthn / Passkey</span>
+    <span class="kw">mTLS</span>
+    <span class="kw">Zero Trust</span>
+    <span class="kw">OWASP Top 10</span>
+    <span class="kw">Spring Security OAuth2 Resource Server</span>
+  </p>
+  <p class="sub" style="margin-top:12px">
+    추천 자료: <a href="https://jwt.io">jwt.io</a> (JWT 디코더),
+    <a href="https://www.keycloak.org/documentation">Keycloak 공식 문서</a>,
+    <a href="https://oauth.net/2/">oauth.net</a>,
+    <a href="https://cheatsheetseries.owasp.org/">OWASP Cheat Sheet Series</a>
+  </p>
+</section>
+
+<footer>
+  로그인/회원가입 시스템 보안 학습 문서 · 2026-09
+</footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  
+
+  /* ---------- 흐름 애니메이션 엔진 ----------
+     svg.anim 안의 [data-step] 그룹을 단계 순서대로 재생한다.
+     각 그룹의 line/path를 따라 점(dot)이 이동하고,
+     진행 중인 단계에는 .active 클래스가 붙어 강조된다. */
+  var MOVE = 1500;   // 이동 시간(ms)
+  var PAUSE = 500;   // 단계 사이 정지 시간(ms)
+
+  // 디버그/미리보기: ?seek=3.2 처럼 초 단위로 지정하면
+  // 모든 도면이 해당 시점부터 재생을 시작한다.
+  var SEEK = 0;
+  try {
+    var q = new URLSearchParams(window.location.search).get('seek');
+    if (q !== null && isFinite(parseFloat(q))) SEEK = parseFloat(q) * 1000;
+  } catch (e) { /* URLSearchParams 미지원 브라우저는 무시 */ }
+
+  function ease(p) {
+    return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+  }
+
+  function setupDiagram(svg) {
+    var groups = Array.prototype.slice.call(svg.querySelectorAll('[data-step]'));
+    groups.sort(function (a, b) { return (+a.dataset.step) - (+b.dataset.step); });
+    if (!groups.length) return;
+
+    var geos = groups.map(function (g) {
+      if (g.matches && g.matches('line,path')) return g;
+      return g.querySelector('line, path');
+    });
+
+    var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('r', '6');
+    dot.setAttribute('class', 'dot');
+    dot.style.opacity = '0';
+    svg.appendChild(dot);
+
+    var stepDur = MOVE + PAUSE;
+    var total = groups.length * stepDur;
+    var visible = true;
+    var startTime = null;
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { visible = e.isIntersecting; });
+      }, { threshold: 0.05 });
+      io.observe(svg);
+    }
+
+    function frame(t) {
+      if (startTime === null) startTime = t;
+      if (visible) {
+        var elapsed = (t - startTime + SEEK) % total;
+        var idx = Math.floor(elapsed / stepDur);
+        var progress = Math.min((elapsed - idx * stepDur) / MOVE, 1);
+
+        groups.forEach(function (g, i) {
+          g.classList.toggle('active', i === idx);
+        });
+
+        var geo = geos[idx];
+        if (geo && typeof geo.getTotalLength === 'function') {
+          try {
+            var len = geo.getTotalLength();
+            var pt = geo.getPointAtLength(len * ease(progress));
+            dot.setAttribute('cx', pt.x);
+            dot.setAttribute('cy', pt.y);
+            dot.style.opacity = progress >= 1 ? '0' : '1';
+          } catch (err) {
+            dot.style.opacity = '0';
+          }
+        } else {
+          dot.style.opacity = '0';
+        }
+      }
+      window.requestAnimationFrame(frame);
+    }
+    window.requestAnimationFrame(frame);
+  }
+
+  function init() {
+    var svgs = document.querySelectorAll('svg.anim');
+    Array.prototype.forEach.call(svgs, setupDiagram);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
