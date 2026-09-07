@@ -1,0 +1,16 @@
+/* ============================================================
+   db-transaction 페이지 전용 스타일
+   공통 스타일은 src/styles/global.css — 여기에는 이 페이지 고유만 둔다.
+   ============================================================ */
+
+/* 관계 대수 예시 릴레이션(원본·σ 결과·π 결과)을 나란히 배치 */
+.rel-pair {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: flex-start;
+  margin: 12px 0;
+}
+.rel-pair .rel { flex: 1 1 220px; min-width: 200px; }
+.rel-pair .rel .rel-name { font-weight: 700; font-size: 1em; }
+.rel-pair .rel table { margin: 6px 0 0; }

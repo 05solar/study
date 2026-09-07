@@ -1,0 +1,15 @@
+/* 인터페이스 기능 구현 페이지 전용 스타일
+   공통 스타일은 src/styles/global.css에 있으므로 여기에는 이 페이지 고유 요소만 둔다. */
+
+/* JSON vs XML 예제를 나란히 비교하는 2단 코드 그리드 */
+.code-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 12px 0;
+}
+.code-compare pre { margin: 0; }
+.code-compare .code-title { font-weight: 700; margin: 0 0 4px; font-size: 1em; }
+@media (max-width: 640px) {
+  .code-compare { grid-template-columns: 1fr; }
+}

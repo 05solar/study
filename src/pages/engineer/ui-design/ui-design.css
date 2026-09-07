@@ -1,0 +1,38 @@
+/* ============================================================
+   UI 설계 · UML 페이지 전용 스타일
+   UML 고유 표기(마름모·삼각형 화살촉, 관계선, 액터 막대 인형)를
+   그리기 위한 SVG 클래스만 정의한다. 공통 스타일은 global.css 참고.
+   ============================================================ */
+
+/* 관계선: 화살촉 없는 실선 (연관 등 UML 관계 기본선) */
+svg.d .rel {
+  stroke: var(--ink);
+  stroke-width: 1.7;
+  fill: none;
+}
+
+/* 점선 관계선 (의존 · 실체화 · «include» · «extend») */
+svg.d .rel.dash {
+  stroke-dasharray: 6 5;
+}
+
+/* 빈(흰) 마름모·삼각형 화살촉 — 집합, 일반화, 실체화 */
+svg.d .uml-hollow {
+  fill: var(--card);
+  stroke: var(--ink);
+  stroke-width: 1.6;
+}
+
+/* 채운(검정) 마름모 화살촉 — 복합 */
+svg.d .uml-solid {
+  fill: var(--ink);
+  stroke: var(--ink);
+  stroke-width: 1.6;
+}
+
+/* 액터(스틱 피겨)의 몸통·팔·다리 선 */
+svg.d .stick {
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  fill: none;
+}

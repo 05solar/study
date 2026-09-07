@@ -1,0 +1,18 @@
+/* 파이썬(Python) 총정리 페이지 전용 스타일.
+   공통 스타일은 src/styles/global.css에 있으므로 여기에는 이 페이지 고유 요소만 둔다.
+   (사이드 마커 금지 등 규칙은 design.md 참고) */
+
+/* 코드 예제 바로 아래에 붙는 "출력 결과" 블록 */
+pre.py-out {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  margin-top: -8px;
+}
+pre.py-out::before {
+  content: "출력 결과";
+  display: block;
+  font-weight: 700;
+  font-size: 1em;
+  color: var(--accent-dark);
+  margin-bottom: 4px;
+}

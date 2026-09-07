@@ -1,0 +1,8 @@
+/* 내외부 연계 모듈 구현 페이지 전용 스타일 */
+
+/* EAI 구축 유형 비교도 등에서 쓰는 무방향 연결선(화살촉 없음) */
+svg.d .link {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  fill: none;
+}

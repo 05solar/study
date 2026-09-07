@@ -1,0 +1,19 @@
+/* 응용 SQL · 집계성 SQL 페이지 전용 스타일 */
+
+/* SQL과 결과 표(또는 두 결과 표)를 나란히 비교하는 2단 배치 */
+.duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+  align-items: start;
+}
+.duo table { margin: 8px 0 12px; }
+@media (max-width: 640px) {
+  .duo { grid-template-columns: 1fr; }
+}
+
+/* 결과 표 위에 붙이는 굵은 캡션 (글자 크기는 본문과 동일한 1em) */
+.tbl-cap {
+  font-weight: 700;
+  margin: 10px 0 0;
+}
