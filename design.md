@@ -64,6 +64,15 @@
 - **표**: 전체 1px 테두리, 헤더 배경 `--accent-soft`.
 - **키워드 배지 `.kw`**: 파랑 1px 테두리의 인라인 칩. 문서 끝 "더 공부할 키워드"에 사용.
 - **구분선 `.divider`**: 1px 회색 수평선.
+- **채점형 퀴즈 `QuizInput`** (`src/shared/QuizInput.tsx`): 정답 입력란 + 제출 버튼이 있는 문항 컴포넌트.
+  제출하면 정규화 비교(대소문자·공백·문장부호 무시)로 채점되어, 정답이면 초록 결과(`--ok`)와 해설,
+  오답이면 빨강 결과(`--danger`)와 정답·해설이 표시된다. 문항 데이터는 `QuizData[]` 배열로 정의해
+  `{QUESTIONS.map((q) => <QuizInput {...q} key={q.num} />)}` 로 렌더링한다.
+  `answers`에는 인정할 표기 변형(한글/영문/약어)을 넉넉히 넣고, 대표 표기는 `answerLabel`로 지정한다.
+  기출 변형문제(`/variant`)와 복원문제(`/archive`) 페이지에서 사용.
+- **로컬 전용 폴더**: `src/pages/exam-archive/`(실기 기출 복원문제)는 저작권 문제로 `.gitignore`에
+  등록된 로컬 전용이다. 라우터는 이 폴더의 `routes.ts`를 `import.meta.glob`으로 조건부 로드하므로
+  폴더가 없어도(공개 빌드) 빌드가 깨지지 않고, 홈의 폴더 카드는 `archiveAvailable`일 때만 표시된다.
 - **실전 문제 `.quiz-item`**: 정보처리기사 실기 스타일 문제 블록. 구조는
   `div.quiz-item > span.q-num("문제 N") + p.q-body(발문) [+ pre(보기/코드)] + details > summary("정답 보기") + div.answer`.
   answer 안에는 `<span class="label">정답:</span>` 뒤에 답, 이어서 `<span class="label">해설:</span>` 뒤에 짧은 해설.

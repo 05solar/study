@@ -1,3 +1,6 @@
 node_modules/
 dist/
 *.local
+
+# 실기 기출 복원문제 — 저작권 문제로 로컬 전용 (커밋/배포 금지)
+src/pages/exam-archive/

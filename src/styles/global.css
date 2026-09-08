@@ -15,6 +15,8 @@
   --accent-soft: #e9effc;
   --danger: #d23c3c;
   --danger-soft: #fdecec;
+  --ok: #1d7a3e;
+  --ok-soft: #e9f7ee;
 }
 
 * { box-sizing: border-box; }
@@ -210,6 +212,41 @@ footer { text-align: center; color: var(--muted); font-size: 1em; margin-top: 28
   font-size: 1em;
 }
 .quiz-item .answer .label { font-weight: 700; color: var(--accent-dark); }
+
+/* ---------- 정답 입력형 퀴즈 (QuizInput 컴포넌트) ---------- */
+.q-answer-row { display: flex; gap: 8px; margin-top: 10px; }
+.q-input {
+  flex: 1 1 auto;
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+  font-size: 1em;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--card);
+}
+.q-input:focus { outline: none; border-color: var(--accent); }
+.q-input:disabled { background: var(--soft); }
+.q-btn {
+  flex: 0 0 auto;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+  padding: 6px 18px;
+  font-size: 1em;
+  font-family: inherit;
+  cursor: pointer;
+}
+.q-btn:hover { background: var(--accent-dark); }
+.q-btn.ghost { background: var(--card); color: var(--accent); }
+.q-btn.ghost:hover { background: var(--accent-soft); }
+.q-result { margin-top: 10px; padding: 10px 14px; border: 1px solid var(--line); }
+.q-result p { margin: 4px 0; }
+.q-result .label { font-weight: 700; }
+.q-result .q-verdict { font-weight: 700; }
+.q-result.ok { background: var(--ok-soft); border-color: var(--ok); }
+.q-result.ok .q-verdict { color: var(--ok); }
+.q-result.no { background: var(--danger-soft); border-color: var(--danger); }
+.q-result.no .q-verdict { color: var(--danger); }
 
 /* 문서 페이지 상단 "목록으로" 링크 */
 .backlink { margin: 0 0 14px; font-size: 1em; }

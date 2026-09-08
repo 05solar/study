@@ -1,5 +1,6 @@
 import { defineComponent } from 'vue'
 import { RouterLink } from 'vue-router'
+import { archiveAvailable } from '../../router'
 import './home.css'
 
 interface DocEntry {
@@ -69,6 +70,24 @@ export default defineComponent({
           </span>
           <span class="chev" aria-hidden="true"></span>
         </RouterLink>
+        <RouterLink class="doc-card folder" to="/variant">
+          <span class="doc-num">폴더</span>
+          <span class="doc-title">
+            <strong>기출 변형문제 — 주제별 20문제</strong>
+            <span>실기 기출 유형을 변형한 채점형 문제 27주제 × 20문항 — 정답을 입력하면 자동 채점되고 해설이 표시됩니다</span>
+          </span>
+          <span class="chev" aria-hidden="true"></span>
+        </RouterLink>
+        {archiveAvailable ? (
+          <RouterLink class="doc-card folder" to="/archive">
+            <span class="doc-num">로컬</span>
+            <span class="doc-title">
+              <strong>실기 기출 복원문제 — 년도별 (로컬 전용)</strong>
+              <span>2020~2025 회차별 복원문제 채점형 정리 — 이 폴더는 커밋/배포되지 않습니다</span>
+            </span>
+            <span class="chev" aria-hidden="true"></span>
+          </RouterLink>
+        ) : null}
 
         <footer>
           05solar · <a href="https://github.com/05solar/study" rel="noopener">github.com/05solar/study</a>
