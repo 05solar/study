@@ -10,6 +10,67 @@ export default defineComponent({
   setup() {
     const root = ref<HTMLElement | null>(null)
     useFlowAnimation(root)
+
+    /* ---- 도면용 장치 아이콘 헬퍼 (cx 중심, top=아이콘 상단 y) ---- */
+    // 모니터(PC·브라우저·클라이언트)
+    const pc = (cx: number, label: string, top = 6) => (
+      <g>
+        <rect class="ic" x={cx - 28} y={top} width="56" height="34" rx="4" />
+        <rect class="screen" x={cx - 23} y={top + 5} width="46" height="20" rx="2" />
+        <rect class="ic" x={cx - 4} y={top + 34} width="8" height="6" />
+        <rect class="ic" x={cx - 15} y={top + 40} width="30" height="4.5" rx="2.25" />
+        <text x={cx} y={top + 60} text-anchor="middle" class="lbl">{label}</text>
+      </g>
+    )
+    // 서버 (랙)
+    const srv = (cx: number, label: string, top = 4) => (
+      <g>
+        <rect class="ic" x={cx - 20} y={top} width="40" height="44" rx="5" />
+        <line class="sep" x1={cx - 15} y1={top + 22} x2={cx + 15} y2={top + 22} />
+        <circle class="led" cx={cx - 12} cy={top + 11} r="2.5" />
+        <rect class="vent" x={cx - 6} y={top + 8} width="18" height="2.5" rx="1.25" />
+        <rect class="vent" x={cx - 6} y={top + 13} width="18" height="2.5" rx="1.25" />
+        <circle class="led" cx={cx - 12} cy={top + 33} r="2.5" />
+        <rect class="vent" x={cx - 6} y={top + 30} width="18" height="2.5" rx="1.25" />
+        <rect class="vent" x={cx - 6} y={top + 35} width="18" height="2.5" rx="1.25" />
+        <text x={cx} y={top + 62} text-anchor="middle" class="lbl">{label}</text>
+      </g>
+    )
+    // 스마트폰 (기기·인증앱)
+    const phone = (cx: number, label: string, top = 4) => (
+      <g>
+        <rect class="ic" x={cx - 13} y={top} width="26" height="46" rx="5" />
+        <rect class="screen" x={cx - 9.5} y={top + 5} width="19" height="31" rx="2" />
+        <circle cx={cx} cy={top + 41} r="2" fill="var(--muted)" />
+        <text x={cx} y={top + 62} text-anchor="middle" class="lbl">{label}</text>
+      </g>
+    )
+    // 데이터베이스 (원통)
+    const db = (cx: number, label: string, top = 6) => (
+      <g>
+        <path class="ic" d={`M${cx - 20} ${top + 6} v26 a20 6 0 0 0 40 0 v-26`} />
+        <ellipse class="ic" cx={cx} cy={top + 6} rx="20" ry="6" />
+        <path class="sep" d={`M${cx - 20} ${top + 16} a20 6 0 0 0 40 0`} />
+        <text x={cx} y={top + 58} text-anchor="middle" class="lbl">{label}</text>
+      </g>
+    )
+    // 이메일 사서함 (봉투)
+    const mail = (cx: number, label: string, top = 8) => (
+      <g>
+        <rect class="ic" x={cx - 22} y={top} width="44" height="30" rx="3" />
+        <path class="sep" d={`M${cx - 22} ${top + 3} L${cx} ${top + 17} L${cx + 22} ${top + 3}`} />
+        <text x={cx} y={top + 50} text-anchor="middle" class="lbl">{label}</text>
+      </g>
+    )
+    // 사람 (사용자·공격자)
+    const person = (cx: number, label: string, top = 4) => (
+      <g>
+        <circle class="ic" cx={cx} cy={top + 11} r="9" />
+        <path class="ic" d={`M${cx - 16} ${top + 44} v-4 a16 15 0 0 1 32 0 v4 z`} />
+        <text x={cx} y={top + 62} text-anchor="middle" class="lbl">{label}</text>
+      </g>
+    )
+
     return () => (
       <div class="wrap" ref={root}>
         <ArrowDefs />
@@ -203,29 +264,24 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 210" role="img" aria-label="소유 기반 인증 도면">
-              <rect class="box" x="40" y="70" width="200" height="80"/>
-              <text x="140" y="100" text-anchor="middle" class="strong">서버</text>
-              <text x="140" y="122" text-anchor="middle" class="small">로그인 시도 감지</text>
-
-              <rect class="box" x="360" y="70" width="200" height="80"/>
-              <text x="460" y="100" text-anchor="middle" class="strong">소유 기기</text>
-              <text x="460" y="122" text-anchor="middle" class="small">스마트폰 · 보안키</text>
-
-              <rect class="box" x="680" y="70" width="190" height="80"/>
-              <text x="775" y="100" text-anchor="middle" class="strong">사용자</text>
-              <text x="775" y="122" text-anchor="middle" class="small">기기를 보유</text>
+              {srv(140, '서버', 64)}
+              <text x="140" y="142" text-anchor="middle" class="small">로그인 시도 감지</text>
+              {phone(460, '소유 기기', 62)}
+              <text x="460" y="142" text-anchor="middle" class="small">스마트폰 · 보안키</text>
+              {person(775, '사용자', 64)}
+              <text x="775" y="142" text-anchor="middle" class="small">기기를 보유</text>
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="240" y1="110" x2="354" y2="110"/>
-                <text x="297" y="55" text-anchor="middle" class="small">1. 소유 증명 요구</text>
-                <text x="297" y="185" text-anchor="middle" class="small">(코드/서명 요청)</text>
+                <line class="arrow" x1="162" y1="108" x2="445" y2="108"/>
+                <text x="303" y="52" text-anchor="middle" class="small">1. 소유 증명 요구</text>
+                <text x="303" y="185" text-anchor="middle" class="small">(코드/서명 요청)</text>
               </g>
               <g class="msg" data-step="2">
-                <line class="arrow" x1="560" y1="110" x2="674" y2="110"/>
-                <text x="617" y="55" text-anchor="middle" class="small">2. 기기가 응답</text>
+                <line class="arrow" x1="475" y1="108" x2="757" y2="108"/>
+                <text x="616" y="52" text-anchor="middle" class="small">2. 기기가 응답</text>
               </g>
               <g class="msg" data-step="3">
-                <line class="arrow ret" x1="674" y1="135" x2="246" y2="135"/>
+                <line class="arrow ret" x1="757" y1="132" x2="168" y2="132"/>
                 <text x="450" y="200" text-anchor="middle" class="small">3. 응답값을 서버가 확인 → “기기를 실제로 가지고 있다”</text>
               </g>
             </svg>
@@ -241,12 +297,9 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 300" role="img" aria-label="생체 인증 로컬 검증 도면">
-              <rect class="box" x="55" y="14" width="200" height="36"/>
-              <text x="155" y="38" text-anchor="middle" class="strong">사용자 신체</text>
-              <rect class="box" x="360" y="14" width="200" height="36"/>
-              <text x="460" y="38" text-anchor="middle" class="strong">기기(스마트폰/PC)</text>
-              <rect class="box" x="665" y="14" width="200" height="36"/>
-              <text x="765" y="38" text-anchor="middle" class="strong">서버</text>
+              {person(155, '사용자 신체')}
+              {phone(460, '기기(스마트폰/PC)')}
+              {srv(765, '서버')}
               <line class="life" x1="155" y1="50" x2="155" y2="285"/>
               <line class="life" x1="460" y1="50" x2="460" y2="285"/>
               <line class="life" x1="765" y1="50" x2="765" y2="285"/>
@@ -318,12 +371,9 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 300" role="img" aria-label="아이디 비밀번호 로그인 흐름 도면">
-              <rect class="box" x="95" y="14" width="170" height="36"/>
-              <text x="180" y="38" text-anchor="middle" class="strong">클라이언트</text>
-              <rect class="box" x="380" y="14" width="170" height="36"/>
-              <text x="465" y="38" text-anchor="middle" class="strong">서버</text>
-              <rect class="box" x="665" y="14" width="180" height="36"/>
-              <text x="755" y="38" text-anchor="middle" class="strong">DB (해시 저장)</text>
+              {pc(180, '클라이언트')}
+              {srv(465, '서버')}
+              {db(755, 'DB (해시 저장)')}
               <line class="life" x1="180" y1="50" x2="180" y2="285"/>
               <line class="life" x1="465" y1="50" x2="465" y2="285"/>
               <line class="life" x1="755" y1="50" x2="755" y2="285"/>
@@ -366,12 +416,9 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 420" role="img" aria-label="세션 방식 순서 도면">
-              <rect class="box" x="115" y="14" width="170" height="36"/>
-              <text x="200" y="38" text-anchor="middle" class="strong">브라우저</text>
-              <rect class="box" x="395" y="14" width="170" height="36"/>
-              <text x="480" y="38" text-anchor="middle" class="strong">서버</text>
-              <rect class="box" x="645" y="14" width="190" height="36"/>
-              <text x="740" y="38" text-anchor="middle" class="strong">세션 저장소 (Redis)</text>
+              {pc(200, '브라우저')}
+              {srv(480, '서버')}
+              {db(740, '세션 저장소(Redis)')}
               <line class="life" x1="200" y1="50" x2="200" y2="405"/>
               <line class="life" x1="480" y1="50" x2="480" y2="405"/>
               <line class="life" x1="740" y1="50" x2="740" y2="405"/>
@@ -423,10 +470,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 350" role="img" aria-label="토큰 방식 순서 도면">
-              <rect class="box" x="165" y="14" width="170" height="36"/>
-              <text x="250" y="38" text-anchor="middle" class="strong">클라이언트</text>
-              <rect class="box" x="565" y="14" width="170" height="36"/>
-              <text x="650" y="38" text-anchor="middle" class="strong">서버</text>
+              {pc(250, '클라이언트')}
+              {srv(650, '서버')}
               <line class="life" x1="250" y1="50" x2="250" y2="335"/>
               <line class="life" x1="650" y1="50" x2="650" y2="335"/>
 
@@ -512,10 +557,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 300" role="img" aria-label="JWT 위조 거부 도면">
-              <rect class="box" x="165" y="14" width="170" height="36"/>
-              <text x="250" y="38" text-anchor="middle" class="strong">공격자</text>
-              <rect class="box" x="565" y="14" width="200" height="36"/>
-              <text x="665" y="38" text-anchor="middle" class="strong">서버 (비밀 키 보유)</text>
+              {person(250, '공격자')}
+              {srv(665, '서버 (비밀 키 보유)')}
               <line class="life" x1="250" y1="50" x2="250" y2="285"/>
               <line class="life" x1="665" y1="50" x2="665" y2="285"/>
 
@@ -548,10 +591,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 320" role="img" aria-label="TOTP 인증 흐름 도면">
-              <rect class="box" x="95" y="14" width="180" height="36"/>
-              <text x="185" y="38" text-anchor="middle" class="strong">인증 앱</text>
-              <rect class="box" x="620" y="14" width="180" height="36"/>
-              <text x="710" y="38" text-anchor="middle" class="strong">서버</text>
+              {phone(185, '인증 앱')}
+              {srv(710, '서버')}
               <line class="life" x1="185" y1="50" x2="185" y2="305"/>
               <line class="life" x1="710" y1="50" x2="710" y2="305"/>
 
@@ -592,12 +633,9 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 320" role="img" aria-label="매직 링크 흐름 도면">
-              <rect class="box" x="60" y="14" width="150" height="36"/>
-              <text x="135" y="38" text-anchor="middle" class="strong">사용자</text>
-              <rect class="box" x="330" y="14" width="150" height="36"/>
-              <text x="405" y="38" text-anchor="middle" class="strong">서버</text>
-              <rect class="box" x="620" y="14" width="180" height="36"/>
-              <text x="710" y="38" text-anchor="middle" class="strong">이메일 사서함</text>
+              {person(135, '사용자')}
+              {srv(405, '서버')}
+              {mail(710, '이메일 사서함')}
               <line class="life" x1="135" y1="50" x2="135" y2="305"/>
               <line class="life" x1="405" y1="50" x2="405" y2="305"/>
               <line class="life" x1="710" y1="50" x2="710" y2="305"/>
@@ -635,10 +673,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 330" role="img" aria-label="패스키 등록과 로그인 도면">
-              <rect class="box" x="95" y="14" width="200" height="36"/>
-              <text x="195" y="38" text-anchor="middle" class="strong">기기(인증기)</text>
-              <rect class="box" x="605" y="14" width="200" height="36"/>
-              <text x="705" y="38" text-anchor="middle" class="strong">서버</text>
+              {phone(195, '기기(인증기)')}
+              {srv(705, '서버')}
               <line class="life" x1="195" y1="50" x2="195" y2="315"/>
               <line class="life" x1="705" y1="50" x2="705" y2="315"/>
 
@@ -722,12 +758,9 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 360" role="img" aria-label="소셜 로그인 흐름 도면">
-              <rect class="box" x="40" y="14" width="150" height="36"/>
-              <text x="115" y="38" text-anchor="middle" class="strong">사용자</text>
-              <rect class="box" x="300" y="14" width="160" height="36"/>
-              <text x="380" y="38" text-anchor="middle" class="strong">내 백엔드</text>
-              <rect class="box" x="640" y="14" width="200" height="36"/>
-              <text x="740" y="38" text-anchor="middle" class="strong">공급자(Google)</text>
+              {person(115, '사용자')}
+              {srv(380, '내 백엔드')}
+              {srv(740, '공급자(Google)')}
               <line class="life" x1="115" y1="50" x2="115" y2="345"/>
               <line class="life" x1="380" y1="50" x2="380" y2="345"/>
               <line class="life" x1="740" y1="50" x2="740" y2="345"/>
@@ -786,14 +819,10 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 420" role="img" aria-label="Authorization Code + PKCE 흐름 도면">
-              <rect class="box" x="30" y="14" width="150" height="36"/>
-              <text x="105" y="38" text-anchor="middle" class="strong">브라우저</text>
-              <rect class="box" x="255" y="14" width="150" height="36"/>
-              <text x="330" y="38" text-anchor="middle" class="strong">클라이언트</text>
-              <rect class="box" x="500" y="14" width="160" height="36"/>
-              <text x="580" y="38" text-anchor="middle" class="strong">인증 서버</text>
-              <rect class="box" x="730" y="14" width="150" height="36"/>
-              <text x="805" y="38" text-anchor="middle" class="strong">자원 서버</text>
+              {pc(105, '브라우저')}
+              {srv(330, '클라이언트')}
+              {srv(580, '인증 서버')}
+              {srv(805, '자원 서버')}
               <line class="life" x1="105" y1="50" x2="105" y2="405"/>
               <line class="life" x1="330" y1="50" x2="330" y2="405"/>
               <line class="life" x1="580" y1="50" x2="580" y2="405"/>
@@ -894,12 +923,9 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 300" role="img" aria-label="SAML 흐름 도면">
-              <rect class="box" x="60" y="14" width="150" height="36"/>
-              <text x="135" y="38" text-anchor="middle" class="strong">사용자</text>
-              <rect class="box" x="330" y="14" width="180" height="36"/>
-              <text x="420" y="38" text-anchor="middle" class="strong">서비스 제공자(SP)</text>
-              <rect class="box" x="640" y="14" width="200" height="36"/>
-              <text x="740" y="38" text-anchor="middle" class="strong">인증 제공자(IdP)</text>
+              {person(135, '사용자')}
+              {srv(420, '서비스 제공자(SP)')}
+              {srv(740, '인증 제공자(IdP)')}
               <line class="life" x1="135" y1="50" x2="135" y2="285"/>
               <line class="life" x1="420" y1="50" x2="420" y2="285"/>
               <line class="life" x1="740" y1="50" x2="740" y2="285"/>
@@ -936,14 +962,10 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 560" role="img" aria-label="SSO 동작 순서 도면">
-              <rect class="box" x="30" y="14" width="150" height="36"/>
-              <text x="105" y="38" text-anchor="middle" class="strong">브라우저</text>
-              <rect class="box" x="260" y="14" width="150" height="36"/>
-              <text x="335" y="38" text-anchor="middle" class="strong">서비스 A</text>
-              <rect class="box" x="490" y="14" width="150" height="36"/>
-              <text x="565" y="38" text-anchor="middle" class="strong">서비스 B</text>
-              <rect class="box" x="710" y="14" width="170" height="36"/>
-              <text x="795" y="38" text-anchor="middle" class="strong">IdP (Keycloak)</text>
+              {pc(105, '브라우저')}
+              {srv(335, '서비스 A')}
+              {srv(565, '서비스 B')}
+              {srv(795, 'IdP (Keycloak)')}
               <line class="life" x1="105" y1="50" x2="105" y2="545"/>
               <line class="life" x1="335" y1="50" x2="335" y2="545"/>
               <line class="life" x1="565" y1="50" x2="565" y2="545"/>
@@ -1002,12 +1024,9 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 250" role="img" aria-label="LDAP Bind 인증 도면">
-              <rect class="box" x="60" y="14" width="150" height="36"/>
-              <text x="135" y="38" text-anchor="middle" class="strong">사용자</text>
-              <rect class="box" x="330" y="14" width="160" height="36"/>
-              <text x="410" y="38" text-anchor="middle" class="strong">애플리케이션</text>
-              <rect class="box" x="640" y="14" width="220" height="36"/>
-              <text x="750" y="38" text-anchor="middle" class="strong">디렉터리 서버 (AD/LDAP)</text>
+              {person(135, '사용자')}
+              {srv(410, '애플리케이션')}
+              {db(750, '디렉터리 서버(AD/LDAP)')}
               <line class="life" x1="135" y1="50" x2="135" y2="235"/>
               <line class="life" x1="410" y1="50" x2="410" y2="235"/>
               <line class="life" x1="750" y1="50" x2="750" y2="235"/>
@@ -1040,12 +1059,9 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 320" role="img" aria-label="Kerberos 티켓 흐름 도면">
-              <rect class="box" x="60" y="14" width="150" height="36"/>
-              <text x="135" y="38" text-anchor="middle" class="strong">클라이언트</text>
-              <rect class="box" x="360" y="14" width="180" height="36"/>
-              <text x="450" y="38" text-anchor="middle" class="strong">KDC (인증 서버)</text>
-              <rect class="box" x="680" y="14" width="180" height="36"/>
-              <text x="770" y="38" text-anchor="middle" class="strong">내부 서비스</text>
+              {pc(135, '클라이언트')}
+              {srv(450, 'KDC (인증 서버)')}
+              {srv(770, '내부 서비스')}
               <line class="life" x1="135" y1="50" x2="135" y2="305"/>
               <line class="life" x1="450" y1="50" x2="450" y2="305"/>
               <line class="life" x1="770" y1="50" x2="770" y2="305"/>
@@ -1082,10 +1098,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 260" role="img" aria-label="인증서 기반 서명 검증 도면">
-              <rect class="box" x="95" y="14" width="200" height="36"/>
-              <text x="195" y="38" text-anchor="middle" class="strong">클라이언트(개인키)</text>
-              <rect class="box" x="605" y="14" width="220" height="36"/>
-              <text x="715" y="38" text-anchor="middle" class="strong">서버(인증서 공개키)</text>
+              {pc(195, '클라이언트(개인키)')}
+              {srv(715, '서버(인증서 공개키)')}
               <line class="life" x1="195" y1="50" x2="195" y2="245"/>
               <line class="life" x1="715" y1="50" x2="715" y2="245"/>
 
@@ -1113,10 +1127,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 230" role="img" aria-label="mTLS 상호 인증 도면">
-              <rect class="box" x="95" y="14" width="200" height="36"/>
-              <text x="195" y="38" text-anchor="middle" class="strong">클라이언트</text>
-              <rect class="box" x="605" y="14" width="200" height="36"/>
-              <text x="705" y="38" text-anchor="middle" class="strong">서버</text>
+              {pc(195, '클라이언트')}
+              {srv(705, '서버')}
               <line class="life" x1="195" y1="50" x2="195" y2="215"/>
               <line class="life" x1="705" y1="50" x2="705" y2="215"/>
 
@@ -1144,10 +1156,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 210" role="img" aria-label="API Key 인증 도면">
-              <rect class="box" x="95" y="14" width="200" height="36"/>
-              <text x="195" y="38" text-anchor="middle" class="strong">클라이언트</text>
-              <rect class="box" x="605" y="14" width="220" height="36"/>
-              <text x="715" y="38" text-anchor="middle" class="strong">API 서버</text>
+              {pc(195, '클라이언트')}
+              {srv(715, 'API 서버')}
               <line class="life" x1="195" y1="50" x2="195" y2="195"/>
               <line class="life" x1="715" y1="50" x2="715" y2="195"/>
 
@@ -1175,10 +1185,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 240" role="img" aria-label="HMAC 서명 검증 도면">
-              <rect class="box" x="95" y="14" width="220" height="36"/>
-              <text x="205" y="38" text-anchor="middle" class="strong">클라이언트(Secret)</text>
-              <rect class="box" x="605" y="14" width="220" height="36"/>
-              <text x="715" y="38" text-anchor="middle" class="strong">서버(같은 Secret)</text>
+              {pc(205, '클라이언트(Secret)')}
+              {srv(715, '서버(같은 Secret)')}
               <line class="life" x1="205" y1="50" x2="205" y2="225"/>
               <line class="life" x1="715" y1="50" x2="715" y2="225"/>
 
@@ -1207,10 +1215,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 230" role="img" aria-label="SSH 키 인증 도면">
-              <rect class="box" x="95" y="14" width="220" height="36"/>
-              <text x="205" y="38" text-anchor="middle" class="strong">로컬(개인키)</text>
-              <rect class="box" x="605" y="14" width="220" height="36"/>
-              <text x="715" y="38" text-anchor="middle" class="strong">서버(공개키 등록)</text>
+              {pc(205, '로컬(개인키)')}
+              {srv(715, '서버(공개키 등록)')}
               <line class="life" x1="205" y1="50" x2="205" y2="215"/>
               <line class="life" x1="715" y1="50" x2="715" y2="215"/>
 
@@ -1267,12 +1273,9 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 300" role="img" aria-label="푸시 인증 흐름 도면">
-              <rect class="box" x="60" y="14" width="150" height="36"/>
-              <text x="135" y="38" text-anchor="middle" class="strong">PC</text>
-              <rect class="box" x="330" y="14" width="150" height="36"/>
-              <text x="405" y="38" text-anchor="middle" class="strong">서버</text>
-              <rect class="box" x="640" y="14" width="180" height="36"/>
-              <text x="730" y="38" text-anchor="middle" class="strong">스마트폰</text>
+              {pc(135, 'PC')}
+              {srv(405, '서버')}
+              {phone(730, '스마트폰')}
               <line class="life" x1="135" y1="50" x2="135" y2="285"/>
               <line class="life" x1="405" y1="50" x2="405" y2="285"/>
               <line class="life" x1="730" y1="50" x2="730" y2="285"/>
@@ -1305,12 +1308,9 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 300" role="img" aria-label="QR 코드 인증 흐름 도면">
-              <rect class="box" x="60" y="14" width="150" height="36"/>
-              <text x="135" y="38" text-anchor="middle" class="strong">PC</text>
-              <rect class="box" x="330" y="14" width="150" height="36"/>
-              <text x="405" y="38" text-anchor="middle" class="strong">서버</text>
-              <rect class="box" x="620" y="14" width="200" height="36"/>
-              <text x="720" y="38" text-anchor="middle" class="strong">로그인된 앱</text>
+              {pc(135, 'PC')}
+              {srv(405, '서버')}
+              {phone(720, '로그인된 앱')}
               <line class="life" x1="135" y1="50" x2="135" y2="285"/>
               <line class="life" x1="405" y1="50" x2="405" y2="285"/>
               <line class="life" x1="720" y1="50" x2="720" y2="285"/>
@@ -1426,10 +1426,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 260" role="img" aria-label="게스트 인증 도면">
-              <rect class="box" x="95" y="14" width="180" height="36"/>
-              <text x="185" y="38" text-anchor="middle" class="strong">앱</text>
-              <rect class="box" x="605" y="14" width="220" height="36"/>
-              <text x="715" y="38" text-anchor="middle" class="strong">서버</text>
+              {pc(185, '앱')}
+              {srv(715, '서버')}
               <line class="life" x1="185" y1="50" x2="185" y2="245"/>
               <line class="life" x1="715" y1="50" x2="715" y2="245"/>
 
@@ -1457,10 +1455,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 210" role="img" aria-label="HTTP Basic 인증 도면">
-              <rect class="box" x="95" y="14" width="200" height="36"/>
-              <text x="195" y="38" text-anchor="middle" class="strong">클라이언트</text>
-              <rect class="box" x="605" y="14" width="200" height="36"/>
-              <text x="705" y="38" text-anchor="middle" class="strong">서버</text>
+              {pc(195, '클라이언트')}
+              {srv(705, '서버')}
               <line class="life" x1="195" y1="50" x2="195" y2="195"/>
               <line class="life" x1="705" y1="50" x2="705" y2="195"/>
 
@@ -1488,12 +1484,9 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 250" role="img" aria-label="Windows 통합 인증 도면">
-              <rect class="box" x="60" y="14" width="160" height="36"/>
-              <text x="140" y="38" text-anchor="middle" class="strong">로그인된 PC</text>
-              <rect class="box" x="340" y="14" width="180" height="36"/>
-              <text x="430" y="38" text-anchor="middle" class="strong">사내 서비스</text>
-              <rect class="box" x="640" y="14" width="200" height="36"/>
-              <text x="740" y="38" text-anchor="middle" class="strong">Active Directory</text>
+              {pc(140, '로그인된 PC')}
+              {srv(430, '사내 서비스')}
+              {db(740, 'Active Directory')}
               <line class="life" x1="140" y1="50" x2="140" y2="235"/>
               <line class="life" x1="430" y1="50" x2="430" y2="235"/>
               <line class="life" x1="740" y1="50" x2="740" y2="235"/>
