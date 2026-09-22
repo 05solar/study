@@ -1569,42 +1569,39 @@ export default defineComponent({
             <tr><td>Passkey</td><td>공개키 기반 비밀번호 없는 인증</td></tr>
           </table>
 
-          <h3>35-2. 보안 강도 스펙트럼 (사용자 인증 수단)</h3>
+          <h3>35-2. 보안 강도 비교 (사용자 인증 수단)</h3>
           <figure class="diagram">
-            <svg class="d anim spectrum" viewBox="0 0 900 180" role="img" aria-label="인증 수단 보안 강도 비교 도면">
-              {/* 기준 축 (약함 → 강함) */}
-              <line class="axis" x1="50" y1="120" x2="855" y2="120"/>
-              <text x="52" y="150" text-anchor="middle" class="small">약함</text>
-              <text x="835" y="150" text-anchor="middle" class="small">강함</text>
+            <svg class="d" viewBox="0 0 900 320" role="img" aria-label="인증 수단 보안 강도 막대 도면">
+              {/* 세로축(강도) · 가로 기준선 */}
+              <line class="arrow" x1="55" y1="260" x2="55" y2="30"/>
+              <text x="55" y="22" text-anchor="middle" class="small">강도</text>
+              <line class="axis" x1="55" y1="260" x2="870" y2="260" stroke="currentColor" stroke-width="1.7"/>
 
-              {/* 파란 점이 각 구간을 따라 왼→오로 이동하며 도착 지점을 강조 */}
-              <g class="msg" data-step="1">
-                <line class="guide" x1="60" y1="120" x2="130" y2="120"/>
-                <line class="tick" x1="130" y1="120" x2="130" y2="92"/>
-                <text x="130" y="80" text-anchor="middle" class="small">비밀번호</text>
-              </g>
-              <g class="msg" data-step="2">
-                <line class="guide" x1="130" y1="120" x2="300" y2="120"/>
-                <line class="tick" x1="300" y1="120" x2="300" y2="92"/>
-                <text x="300" y="80" text-anchor="middle" class="small">SMS OTP</text>
-              </g>
-              <g class="msg" data-step="3">
-                <line class="guide" x1="300" y1="120" x2="470" y2="120"/>
-                <line class="tick" x1="470" y1="120" x2="470" y2="92"/>
-                <text x="470" y="80" text-anchor="middle" class="small">TOTP</text>
-              </g>
-              <g class="msg" data-step="4">
-                <line class="guide" x1="470" y1="120" x2="640" y2="120"/>
-                <line class="tick" x1="640" y1="120" x2="640" y2="92"/>
-                <text x="640" y="80" text-anchor="middle" class="small">푸시(번호일치)</text>
-              </g>
-              <g class="msg" data-step="5">
-                <line class="guide" x1="640" y1="120" x2="800" y2="120"/>
-                <line class="tick" x1="800" y1="120" x2="800" y2="92"/>
-                <text x="800" y="80" text-anchor="middle" class="small">패스키·보안키</text>
-              </g>
+              {/* 막대 5개 — 왼쪽(약함) → 오른쪽(강함) */}
+              <rect class="bar" x="95" y="205" width="110" height="55"/>
+              <text x="150" y="195" text-anchor="middle" class="small">탈취·재사용에 취약</text>
+              <text x="150" y="282" text-anchor="middle" class="small strong">비밀번호</text>
+
+              <rect class="bar" x="255" y="165" width="110" height="95"/>
+              <text x="310" y="155" text-anchor="middle" class="small">SIM 스와핑·가로채기</text>
+              <text x="310" y="282" text-anchor="middle" class="small strong">SMS OTP</text>
+
+              <rect class="bar" x="415" y="125" width="110" height="135"/>
+              <text x="470" y="115" text-anchor="middle" class="small">앱 기반 · SMS보다 안전</text>
+              <text x="470" y="282" text-anchor="middle" class="small strong">TOTP</text>
+
+              <rect class="bar" x="575" y="85" width="110" height="175"/>
+              <text x="630" y="75" text-anchor="middle" class="small">피싱 저항(번호 일치)</text>
+              <text x="630" y="282" text-anchor="middle" class="small strong">푸시 인증</text>
+
+              <rect class="bar top" x="735" y="50" width="110" height="210"/>
+              <text x="790" y="40" text-anchor="middle" class="small">피싱 불가 · 최신 권장</text>
+              <text x="790" y="282" text-anchor="middle" class="small strong">패스키·보안키</text>
+
+              <text x="150" y="302" text-anchor="middle" class="small">← 약함</text>
+              <text x="790" y="302" text-anchor="middle" class="small">강함 →</text>
             </svg>
-            <figcaption>도면 39. 파란 점이 왼쪽(약함)에서 오른쪽(강함)으로 이동하며, 지나온 구간과 도착한 수단이 강조된다. 오른쪽일수록 피싱·탈취에 강하다.</figcaption>
+            <figcaption>도면 39. 막대가 높을수록 보안 강도가 세다. 오른쪽으로 갈수록 피싱·탈취에 강하며, 패스키·보안키가 가장 강력하다.</figcaption>
           </figure>
 
           <h3>35-3. 인증 방식 한눈에 비교</h3>
