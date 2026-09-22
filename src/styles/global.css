@@ -23,8 +23,11 @@
 
 body {
   margin: 0;
-  font-family: "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Pretendard Variable", Pretendard, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
   background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.01em;
   color: var(--ink);
   line-height: 1.65;
   font-size: 15px;
@@ -137,35 +140,37 @@ th { background: var(--accent-soft); }
 
 /* ---------- 도면(다이어그램) ---------- */
 figure.diagram {
-  margin: 16px 0;
+  margin: 18px 0;
   border: 1px solid var(--line);
-  padding: 14px 12px 8px;
-  background: var(--card);
+  border-radius: 14px;
+  padding: 18px 16px 10px;
+  background: linear-gradient(180deg, #fbfcfe 0%, var(--card) 60%);
+  box-shadow: 0 1px 3px rgba(17, 17, 17, 0.05);
   overflow-x: auto;
 }
 figure.diagram figcaption {
-  font-size: 1em;
+  font-size: 0.95em;
   color: var(--muted);
   text-align: center;
-  padding: 6px 8px 2px;
+  padding: 10px 8px 2px;
   border-top: 1px dashed var(--line);
-  margin-top: 6px;
+  margin-top: 10px;
 }
 svg.d { display: block; width: 100%; height: auto; min-width: 620px; color: var(--ink); }
-svg.d text { fill: var(--ink); font-size: 15px; font-family: inherit; }
+svg.d text { fill: var(--ink); font-size: 15px; font-family: inherit; letter-spacing: -0.01em; }
 svg.d .small { font-size: 13px; }
 svg.d .strong { font-weight: 700; }
-svg.d .box { fill: var(--card); stroke: var(--ink); stroke-width: 1.6; }
-svg.d .boxsoft { fill: var(--soft); stroke: var(--muted); stroke-width: 1.2; }
-svg.d .boxdark { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.6; }
-svg.d .ondark { fill: var(--ink); }
-svg.d .life { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 3 5; }
-svg.d .arrow { stroke: var(--ink); stroke-width: 1.7; fill: none; marker-end: url(#ah); }
+svg.d .box { fill: var(--card); stroke: var(--ink); stroke-width: 1.6; rx: 10px; ry: 10px; filter: drop-shadow(0 1px 2px rgba(17, 17, 17, 0.10)); }
+svg.d .boxsoft { fill: var(--soft); stroke: var(--muted); stroke-width: 1.2; rx: 10px; ry: 10px; }
+svg.d .boxdark { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.6; rx: 10px; ry: 10px; }
+svg.d .ondark { fill: var(--accent-dark); }
+svg.d .life { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 3 5; opacity: 0.5; }
+svg.d .arrow { stroke: var(--ink); stroke-width: 1.7; fill: none; marker-end: url(#ah); stroke-linecap: round; stroke-linejoin: round; }
 svg.d .ret { stroke-dasharray: 6 5; }
 svg.d .blocked { stroke: var(--muted); stroke-width: 1.5; fill: none; stroke-dasharray: 4 4; }
-svg.d .xmark { stroke: var(--danger); stroke-width: 2.4; }
-svg.d .dot { fill: var(--accent); stroke: var(--bg); stroke-width: 1.5; transition: opacity .15s; }
-svg.d .msg line, svg.d .msg path { transition: stroke-width 0.25s; }
+svg.d .xmark { stroke: var(--danger); stroke-width: 2.4; stroke-linecap: round; }
+svg.d .dot { fill: var(--accent); stroke: #fff; stroke-width: 2; filter: drop-shadow(0 0 5px rgba(43, 92, 217, 0.75)); transition: opacity .2s; }
+svg.d .msg line, svg.d .msg path { transition: stroke-width 0.25s, stroke 0.25s; }
 svg.d .msg.active text { font-weight: 700; fill: var(--accent); }
 svg.d .msg.active line, svg.d .msg.active path { stroke-width: 3; stroke: var(--accent); marker-end: url(#ahA); }
 svg.d .static { opacity: 1; }

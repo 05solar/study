@@ -1,43 +1,65 @@
 /* 인증 방법 총정리 페이지 전용 스타일 */
 
 /* ---------- 35-2. 보안 강도 막대 도면 ---------- */
-svg.d .bar { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.6; }
-svg.d .bar.top { fill: var(--accent); }
+svg.d .bar {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  rx: 8px;
+  ry: 8px;
+}
+svg.d .bar.top {
+  fill: var(--accent);
+  filter: drop-shadow(0 2px 6px rgba(43, 92, 217, 0.35));
+}
 
 /* ---------- 35-3. 인증 방식 한눈에 비교 (도면 그리드, 2열) ---------- */
 .compare-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin: 16px 0;
+  gap: 16px;
+  margin: 18px 0;
 }
 .compare-grid .cmp-card {
   border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--card);
-  padding: 10px 10px 12px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fbfcfe 0%, var(--card) 55%);
+  padding: 14px 14px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  box-shadow: 0 1px 3px rgba(17, 17, 17, 0.05);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.compare-grid .cmp-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(17, 17, 17, 0.10);
+  border-color: var(--accent);
 }
 .compare-grid svg.mini {
   min-width: 0;
   width: 100%;
   height: auto;
+  display: block;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 8px;
 }
 .compare-grid .cmp-name {
-  margin: 2px 0 0;
-  font-size: 0.98em;
+  margin: 4px 0 0;
+  font-size: 1.02em;
   font-weight: 700;
   text-align: center;
+  color: var(--accent-dark);
 }
 .compare-grid .cmp-note {
   margin: 0;
-  font-size: 0.82em;
+  font-size: 0.84em;
   color: var(--muted);
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 @media (max-width: 560px) {
   .compare-grid { grid-template-columns: 1fr; }
