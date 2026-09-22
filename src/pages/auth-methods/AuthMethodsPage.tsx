@@ -1605,125 +1605,264 @@ export default defineComponent({
           </figure>
 
           <h3>35-3. 인증 방식 한눈에 비교</h3>
-          <p class="sub">각 방식의 대표 구조를 도면으로 나란히 놓고 비교한다.</p>
+          <p class="sub">각 방식의 실제 구조를 컴퓨터·서버·스마트폰 도면으로 그리고, 파란 점이 데이터 흐름을 따라 움직인다.</p>
           <div class="compare-grid">
-            {/* 세션 */}
+            {/* 세션 — 브라우저 → 서버 → 세션 DB */}
             <div class="cmp-card">
-              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="세션 방식 도면">
-                <rect class="box" x="12" y="34" width="98" height="42"/>
-                <text x="61" y="60" text-anchor="middle" class="small">브라우저</text>
-                <rect class="box" x="150" y="34" width="98" height="42"/>
-                <text x="199" y="60" text-anchor="middle" class="small">서버</text>
-                <rect class="boxsoft" x="150" y="100" width="98" height="38"/>
-                <text x="199" y="118" text-anchor="middle" class="small">세션 저장소</text>
-                <text x="199" y="132" text-anchor="middle" class="small">(Redis)</text>
-                <line class="arrow" x1="110" y1="55" x2="150" y2="55"/>
-                <text x="130" y="26" text-anchor="middle" class="small">sid</text>
-                <line class="arrow" x1="199" y1="76" x2="199" y2="100"/>
+              <svg class="d mini anim" viewBox="0 0 300 178" role="img" aria-label="세션 방식 도면">
+                {/* 모니터(브라우저) */}
+                <rect class="ic" x="6" y="46" width="60" height="40" rx="4"/>
+                <rect class="screen" x="11" y="51" width="50" height="26" rx="2"/>
+                <rect class="ic" x="32" y="86" width="8" height="8"/>
+                <rect class="ic" x="21" y="94" width="30" height="5" rx="2.5"/>
+                <text x="36" y="120" text-anchor="middle" class="lbl">브라우저</text>
+                {/* 서버 */}
+                <rect class="ic" x="120" y="34" width="46" height="60" rx="6"/>
+                <line class="sep" x1="125" y1="64" x2="161" y2="64"/>
+                <circle class="led" cx="131" cy="47" r="3"/>
+                <rect class="vent" x="139" y="43" width="19" height="3" rx="1.5"/>
+                <rect class="vent" x="139" y="49" width="19" height="3" rx="1.5"/>
+                <circle class="led" cx="131" cy="77" r="3"/>
+                <rect class="vent" x="139" y="73" width="19" height="3" rx="1.5"/>
+                <rect class="vent" x="139" y="79" width="19" height="3" rx="1.5"/>
+                <text x="143" y="120" text-anchor="middle" class="lbl">서버</text>
+                {/* 세션 DB(원통) */}
+                <path class="ic" d="M234 49 v30 a23 7 0 0 0 46 0 v-30"/>
+                <ellipse class="ic" cx="257" cy="49" rx="23" ry="7"/>
+                <path class="sep" d="M234 61 a23 7 0 0 0 46 0"/>
+                <text x="257" y="120" text-anchor="middle" class="lbl">세션 DB</text>
+                {/* 흐름 */}
+                <g class="msg" data-step="1">
+                  <line class="flow" x1="68" y1="60" x2="118" y2="60"/>
+                  <text x="93" y="34" text-anchor="middle" class="lbl-s">① 요청 + sid</text>
+                </g>
+                <g class="msg" data-step="2">
+                  <line class="flow" x1="168" y1="60" x2="232" y2="60"/>
+                  <text x="200" y="34" text-anchor="middle" class="lbl-s">② 세션 조회</text>
+                </g>
               </svg>
               <p class="cmp-name">세션</p>
-              <p class="cmp-note">서버 저장 · 즉시 무효화 쉬움 · 브라우저 중심 웹</p>
+              <p class="cmp-note">서버가 상태 저장 · 즉시 무효화 쉬움 · 브라우저 중심 웹</p>
             </div>
 
-            {/* 토큰 / JWT */}
+            {/* 토큰 / JWT — 서버가 토큰 발급, 클라이언트가 Bearer로 재요청 */}
             <div class="cmp-card">
-              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="토큰/JWT 방식 도면">
-                <rect class="box" x="12" y="34" width="98" height="42"/>
-                <text x="61" y="60" text-anchor="middle" class="small">클라이언트</text>
-                <rect class="boxdark" x="16" y="96" width="90" height="34"/>
-                <text x="61" y="117" text-anchor="middle" class="small ondark">JWT 보관</text>
-                <rect class="box" x="150" y="34" width="98" height="42"/>
-                <text x="199" y="60" text-anchor="middle" class="small">서버</text>
-                <text x="199" y="120" text-anchor="middle" class="small">상태 저장 X</text>
-                <line class="arrow" x1="110" y1="55" x2="150" y2="55"/>
-                <text x="130" y="26" text-anchor="middle" class="small">Bearer</text>
+              <svg class="d mini anim" viewBox="0 0 300 178" role="img" aria-label="토큰/JWT 방식 도면">
+                {/* JWT 배지 */}
+                <rect class="badge" x="44" y="22" width="40" height="16" rx="8"/>
+                <text x="64" y="34" text-anchor="middle" class="badge-t">JWT</text>
+                {/* 모니터(클라이언트) */}
+                <rect class="ic" x="34" y="46" width="60" height="40" rx="4"/>
+                <rect class="screen" x="39" y="51" width="50" height="26" rx="2"/>
+                <rect class="ic" x="60" y="86" width="8" height="8"/>
+                <rect class="ic" x="49" y="94" width="30" height="5" rx="2.5"/>
+                <text x="64" y="120" text-anchor="middle" class="lbl">클라이언트</text>
+                {/* 서버 */}
+                <rect class="ic" x="206" y="34" width="46" height="60" rx="6"/>
+                <line class="sep" x1="211" y1="64" x2="247" y2="64"/>
+                <circle class="led" cx="217" cy="47" r="3"/>
+                <rect class="vent" x="225" y="43" width="19" height="3" rx="1.5"/>
+                <rect class="vent" x="225" y="49" width="19" height="3" rx="1.5"/>
+                <circle class="led" cx="217" cy="77" r="3"/>
+                <rect class="vent" x="225" y="73" width="19" height="3" rx="1.5"/>
+                <rect class="vent" x="225" y="79" width="19" height="3" rx="1.5"/>
+                <text x="229" y="120" text-anchor="middle" class="lbl">서버 · 무상태</text>
+                {/* 흐름 */}
+                <g class="msg" data-step="1">
+                  <line class="flow ret" x1="204" y1="58" x2="96" y2="58"/>
+                  <text x="150" y="34" text-anchor="middle" class="lbl-s">① 토큰 발급</text>
+                </g>
+                <g class="msg" data-step="2">
+                  <line class="flow" x1="96" y1="92" x2="204" y2="92"/>
+                  <text x="150" y="112" text-anchor="middle" class="lbl-s">② Bearer 요청</text>
+                </g>
               </svg>
               <p class="cmp-name">토큰 / JWT</p>
-              <p class="cmp-note">클라이언트 보관 · 확장 쉬움 · 모바일·API·MSA</p>
+              <p class="cmp-note">클라이언트가 토큰 보관 · 확장 쉬움 · 모바일·API·MSA</p>
             </div>
 
-            {/* OAuth / OIDC */}
+            {/* OAuth / OIDC — 사용자 → 내 앱 → 공급자 */}
             <div class="cmp-card">
-              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="OAuth/OIDC 방식 도면">
-                <rect class="box" x="6" y="55" width="72" height="40"/>
-                <text x="42" y="79" text-anchor="middle" class="small">사용자</text>
-                <rect class="box" x="94" y="55" width="72" height="40"/>
-                <text x="130" y="79" text-anchor="middle" class="small">내 앱</text>
-                <rect class="boxdark" x="182" y="55" width="72" height="40"/>
-                <text x="218" y="79" text-anchor="middle" class="small ondark">공급자</text>
-                <line class="arrow" x1="78" y1="75" x2="94" y2="75"/>
-                <line class="arrow" x1="166" y1="75" x2="182" y2="75"/>
-                <text x="218" y="115" text-anchor="middle" class="small">토큰 위임</text>
+              <svg class="d mini anim" viewBox="0 0 300 178" role="img" aria-label="OAuth/OIDC 방식 도면">
+                {/* 모니터(사용자) */}
+                <rect class="ic" x="6" y="46" width="60" height="40" rx="4"/>
+                <rect class="screen" x="11" y="51" width="50" height="26" rx="2"/>
+                <rect class="ic" x="32" y="86" width="8" height="8"/>
+                <rect class="ic" x="21" y="94" width="30" height="5" rx="2.5"/>
+                <text x="36" y="122" text-anchor="middle" class="lbl">사용자</text>
+                {/* 서버(내 앱) */}
+                <rect class="ic" x="120" y="34" width="46" height="60" rx="6"/>
+                <line class="sep" x1="125" y1="64" x2="161" y2="64"/>
+                <circle class="led" cx="131" cy="47" r="3"/>
+                <rect class="vent" x="139" y="43" width="19" height="3" rx="1.5"/>
+                <circle class="led" cx="131" cy="77" r="3"/>
+                <rect class="vent" x="139" y="73" width="19" height="3" rx="1.5"/>
+                <text x="143" y="122" text-anchor="middle" class="lbl">내 앱</text>
+                {/* 서버(공급자) + G 배지 */}
+                <rect class="ic" x="234" y="34" width="46" height="60" rx="6"/>
+                <line class="sep" x1="239" y1="64" x2="275" y2="64"/>
+                <circle class="badge" cx="257" cy="50" r="10"/>
+                <text x="257" y="54" text-anchor="middle" class="badge-t">G</text>
+                <rect class="vent" x="245" y="73" width="24" height="3" rx="1.5"/>
+                <rect class="vent" x="245" y="79" width="24" height="3" rx="1.5"/>
+                <text x="257" y="122" text-anchor="middle" class="lbl">공급자</text>
+                {/* 흐름 */}
+                <g class="msg" data-step="1">
+                  <line class="flow" x1="68" y1="56" x2="118" y2="56"/>
+                  <text x="93" y="34" text-anchor="middle" class="lbl-s">① 로그인</text>
+                </g>
+                <g class="msg" data-step="2">
+                  <line class="flow" x1="168" y1="56" x2="232" y2="56"/>
+                  <text x="200" y="34" text-anchor="middle" class="lbl-s">② 인가 코드</text>
+                </g>
+                <g class="msg" data-step="3">
+                  <line class="flow ret" x1="232" y1="94" x2="170" y2="94"/>
+                  <text x="201" y="110" text-anchor="middle" class="lbl-s">③ 토큰</text>
+                </g>
               </svg>
               <p class="cmp-name">OAuth / OIDC</p>
               <p class="cmp-note">권한 위임(OAuth)+인증(OIDC) · 소셜 로그인·SSO</p>
             </div>
 
-            {/* SAML */}
+            {/* SAML — 브라우저 → SP → IdP → (XML 단언) */}
             <div class="cmp-card">
-              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="SAML 방식 도면">
-                <rect class="box" x="6" y="55" width="72" height="40"/>
-                <text x="42" y="79" text-anchor="middle" class="small">브라우저</text>
-                <rect class="box" x="94" y="55" width="72" height="40"/>
-                <text x="130" y="79" text-anchor="middle" class="small">SP</text>
-                <rect class="boxdark" x="182" y="55" width="72" height="40"/>
-                <text x="218" y="79" text-anchor="middle" class="small ondark">IdP</text>
-                <line class="arrow" x1="78" y1="70" x2="94" y2="70"/>
-                <line class="arrow" x1="166" y1="70" x2="182" y2="70"/>
-                <text x="130" y="118" text-anchor="middle" class="small">XML Assertion</text>
+              <svg class="d mini anim" viewBox="0 0 300 178" role="img" aria-label="SAML 방식 도면">
+                {/* 모니터(브라우저) */}
+                <rect class="ic" x="6" y="46" width="60" height="40" rx="4"/>
+                <rect class="screen" x="11" y="51" width="50" height="26" rx="2"/>
+                <rect class="ic" x="32" y="86" width="8" height="8"/>
+                <rect class="ic" x="21" y="94" width="30" height="5" rx="2.5"/>
+                <text x="36" y="122" text-anchor="middle" class="lbl">브라우저</text>
+                {/* 서버(SP) */}
+                <rect class="ic" x="120" y="34" width="46" height="60" rx="6"/>
+                <line class="sep" x1="125" y1="64" x2="161" y2="64"/>
+                <circle class="led" cx="131" cy="47" r="3"/>
+                <rect class="vent" x="139" y="43" width="19" height="3" rx="1.5"/>
+                <circle class="led" cx="131" cy="77" r="3"/>
+                <rect class="vent" x="139" y="73" width="19" height="3" rx="1.5"/>
+                <text x="143" y="122" text-anchor="middle" class="lbl">SP</text>
+                {/* 서버(IdP) */}
+                <rect class="ic" x="234" y="34" width="46" height="60" rx="6"/>
+                <line class="sep" x1="239" y1="64" x2="275" y2="64"/>
+                <circle class="led" cx="245" cy="47" r="3"/>
+                <rect class="vent" x="253" y="43" width="19" height="3" rx="1.5"/>
+                <circle class="led" cx="245" cy="77" r="3"/>
+                <rect class="vent" x="253" y="73" width="19" height="3" rx="1.5"/>
+                <text x="257" y="122" text-anchor="middle" class="lbl">IdP</text>
+                {/* 흐름 */}
+                <g class="msg" data-step="1">
+                  <line class="flow" x1="68" y1="56" x2="118" y2="56"/>
+                  <text x="93" y="34" text-anchor="middle" class="lbl-s">① 접근</text>
+                </g>
+                <g class="msg" data-step="2">
+                  <line class="flow" x1="168" y1="56" x2="232" y2="56"/>
+                  <text x="200" y="34" text-anchor="middle" class="lbl-s">② 인증 요청</text>
+                </g>
+                <g class="msg" data-step="3">
+                  <line class="flow ret" x1="232" y1="98" x2="70" y2="98"/>
+                  <text x="150" y="114" text-anchor="middle" class="lbl-s">③ XML 단언(Assertion)</text>
+                </g>
               </svg>
               <p class="cmp-name">SAML</p>
-              <p class="cmp-note">IdP 발급 · XML·레거시 호환 · 기업·학교 SSO</p>
+              <p class="cmp-note">IdP가 XML 단언 발급 · 레거시 호환 · 기업·학교 SSO</p>
             </div>
 
-            {/* 패스키 */}
+            {/* 패스키 — 서버 Challenge → 기기가 개인키로 서명 */}
             <div class="cmp-card">
-              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="패스키 방식 도면">
-                <rect class="box" x="12" y="45" width="100" height="46"/>
-                <text x="62" y="66" text-anchor="middle" class="small">기기</text>
-                <text x="62" y="82" text-anchor="middle" class="small">개인키</text>
-                <rect class="box" x="150" y="45" width="100" height="46"/>
-                <text x="200" y="66" text-anchor="middle" class="small">서버</text>
-                <text x="200" y="82" text-anchor="middle" class="small">공개키</text>
-                <line class="arrow ret" x1="150" y1="58" x2="112" y2="58"/>
-                <text x="131" y="38" text-anchor="middle" class="small">Challenge</text>
-                <line class="arrow" x1="112" y1="82" x2="150" y2="82"/>
-                <text x="131" y="112" text-anchor="middle" class="small">서명</text>
+              <svg class="d mini anim" viewBox="0 0 300 178" role="img" aria-label="패스키 방식 도면">
+                {/* 스마트폰(기기) */}
+                <rect class="ic" x="64" y="34" width="34" height="60" rx="7"/>
+                <rect class="screen" x="68" y="41" width="26" height="40" rx="2"/>
+                <circle cx="81" cy="87" r="2.5" fill="var(--muted)"/>
+                <text x="81" y="120" text-anchor="middle" class="lbl">기기·개인키</text>
+                {/* 서버 */}
+                <rect class="ic" x="200" y="34" width="46" height="60" rx="6"/>
+                <line class="sep" x1="205" y1="64" x2="241" y2="64"/>
+                <circle class="led" cx="211" cy="47" r="3"/>
+                <rect class="vent" x="219" y="43" width="19" height="3" rx="1.5"/>
+                <circle class="led" cx="211" cy="77" r="3"/>
+                <rect class="vent" x="219" y="73" width="19" height="3" rx="1.5"/>
+                <text x="223" y="120" text-anchor="middle" class="lbl">서버·공개키</text>
+                {/* 흐름 */}
+                <g class="msg" data-step="1">
+                  <line class="flow ret" x1="198" y1="58" x2="100" y2="58"/>
+                  <text x="149" y="34" text-anchor="middle" class="lbl-s">① Challenge</text>
+                </g>
+                <g class="msg" data-step="2">
+                  <line class="flow" x1="100" y1="92" x2="198" y2="92"/>
+                  <text x="149" y="112" text-anchor="middle" class="lbl-s">② 개인키 서명</text>
+                </g>
               </svg>
               <p class="cmp-name">패스키</p>
-              <p class="cmp-note">기기 개인키 · 피싱에 강함 · 비밀번호 없는 로그인(권장)</p>
+              <p class="cmp-note">기기 개인키·서버 공개키 · 피싱에 강함 · 비밀번호 없는 로그인</p>
             </div>
 
-            {/* mTLS */}
+            {/* mTLS — 서버 ↔ 서버 상호 인증서 검증 */}
             <div class="cmp-card">
-              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="mTLS 방식 도면">
-                <rect class="box" x="10" y="45" width="104" height="46"/>
-                <text x="62" y="66" text-anchor="middle" class="small">클라이언트</text>
-                <text x="62" y="82" text-anchor="middle" class="small">인증서</text>
-                <rect class="box" x="148" y="45" width="104" height="46"/>
-                <text x="200" y="66" text-anchor="middle" class="small">서버</text>
-                <text x="200" y="82" text-anchor="middle" class="small">인증서</text>
-                <line class="arrow" x1="114" y1="58" x2="148" y2="58"/>
-                <line class="arrow" x1="148" y1="80" x2="114" y2="80"/>
-                <text x="131" y="112" text-anchor="middle" class="small">상호 검증</text>
+              <svg class="d mini anim" viewBox="0 0 300 178" role="img" aria-label="mTLS 방식 도면">
+                {/* 서버(클라이언트) + 자물쇠 */}
+                <rect class="ic" x="34" y="34" width="46" height="60" rx="6"/>
+                <line class="sep" x1="39" y1="58" x2="75" y2="58"/>
+                <circle class="led" cx="45" cy="45" r="3"/>
+                <rect class="vent" x="53" y="42" width="19" height="3" rx="1.5"/>
+                <rect class="badge" x="50" y="68" width="14" height="10" rx="2"/>
+                <path class="lockarc" d="M53 68 v-2 a4 4 0 0 1 8 0 v2"/>
+                <text x="57" y="120" text-anchor="middle" class="lbl">클라이언트</text>
+                {/* 서버 + 자물쇠 */}
+                <rect class="ic" x="200" y="34" width="46" height="60" rx="6"/>
+                <line class="sep" x1="205" y1="58" x2="241" y2="58"/>
+                <circle class="led" cx="211" cy="45" r="3"/>
+                <rect class="vent" x="219" y="42" width="19" height="3" rx="1.5"/>
+                <rect class="badge" x="216" y="68" width="14" height="10" rx="2"/>
+                <path class="lockarc" d="M219 68 v-2 a4 4 0 0 1 8 0 v2"/>
+                <text x="223" y="120" text-anchor="middle" class="lbl">서버</text>
+                {/* 흐름 */}
+                <g class="msg" data-step="1">
+                  <line class="flow" x1="82" y1="56" x2="200" y2="56"/>
+                  <text x="141" y="34" text-anchor="middle" class="lbl-s">① 인증서 제시</text>
+                </g>
+                <g class="msg" data-step="2">
+                  <line class="flow ret" x1="200" y1="92" x2="82" y2="92"/>
+                  <text x="141" y="112" text-anchor="middle" class="lbl-s">② 상호 검증</text>
+                </g>
               </svg>
               <p class="cmp-name">mTLS</p>
-              <p class="cmp-note">양쪽 인증서 · 상호 인증 · 서비스 간·IoT</p>
+              <p class="cmp-note">양쪽 모두 인증서 · 상호 인증 · 서비스 간·IoT</p>
             </div>
 
-            {/* API Key / HMAC */}
+            {/* API Key / HMAC — 호출 앱 → 서버 API */}
             <div class="cmp-card">
-              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="API Key / HMAC 방식 도면">
-                <rect class="box" x="12" y="45" width="100" height="46"/>
-                <text x="62" y="72" text-anchor="middle" class="small">호출 앱</text>
-                <rect class="box" x="150" y="45" width="100" height="46"/>
-                <text x="200" y="72" text-anchor="middle" class="small">서버 API</text>
-                <line class="arrow" x1="112" y1="68" x2="150" y2="68"/>
-                <text x="131" y="36" text-anchor="middle" class="small">API Key</text>
-                <text x="131" y="112" text-anchor="middle" class="small">+ HMAC 서명</text>
+              <svg class="d mini anim" viewBox="0 0 300 178" role="img" aria-label="API Key / HMAC 방식 도면">
+                {/* 서버(호출 앱) */}
+                <rect class="ic" x="34" y="34" width="46" height="60" rx="6"/>
+                <line class="sep" x1="39" y1="64" x2="75" y2="64"/>
+                <circle class="led" cx="45" cy="47" r="3"/>
+                <rect class="vent" x="53" y="43" width="19" height="3" rx="1.5"/>
+                <rect class="vent" x="53" y="49" width="19" height="3" rx="1.5"/>
+                <circle class="led" cx="45" cy="77" r="3"/>
+                <rect class="vent" x="53" y="73" width="19" height="3" rx="1.5"/>
+                <text x="57" y="120" text-anchor="middle" class="lbl">호출 앱</text>
+                {/* 서버 API */}
+                <rect class="ic" x="200" y="34" width="46" height="60" rx="6"/>
+                <line class="sep" x1="205" y1="64" x2="241" y2="64"/>
+                <circle class="led" cx="211" cy="47" r="3"/>
+                <rect class="vent" x="219" y="43" width="19" height="3" rx="1.5"/>
+                <rect class="vent" x="219" y="49" width="19" height="3" rx="1.5"/>
+                <circle class="led" cx="211" cy="77" r="3"/>
+                <rect class="vent" x="219" y="73" width="19" height="3" rx="1.5"/>
+                <text x="223" y="120" text-anchor="middle" class="lbl">서버 API</text>
+                {/* 흐름 */}
+                <g class="msg" data-step="1">
+                  <line class="flow" x1="82" y1="56" x2="200" y2="56"/>
+                  <text x="141" y="34" text-anchor="middle" class="lbl-s">① API Key + 서명</text>
+                </g>
+                <g class="msg" data-step="2">
+                  <line class="flow ret" x1="200" y1="92" x2="82" y2="92"/>
+                  <text x="141" y="112" text-anchor="middle" class="lbl-s">② 검증 → 200 OK</text>
+                </g>
               </svg>
               <p class="cmp-name">API Key / HMAC</p>
-              <p class="cmp-note">키·Secret · 앱 식별·요청 서명 · 서버 간·Webhook</p>
+              <p class="cmp-note">요청에 키·서명 첨부 · 앱 식별 · 서버 간·Webhook</p>
             </div>
           </div>
 
