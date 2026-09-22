@@ -317,7 +317,7 @@ export default defineComponent({
   setup() {
     return () => (
       <div class="wrap">
-        <p class="backlink"><RouterLink to="/variant">← 변형문제 목록으로</RouterLink></p>
+        <p class="backlink"><RouterLink to="/engineer">← 정보처리기사 목록으로</RouterLink></p>
         <header class="hero">
           <h1>기출 변형 — 응용 SQL과 집계성 SQL</h1>
           <p>실기 최다 빈출인 SQL 결과값·구문 채우기 유형을 변형한 20문제입니다. 결과값 문제는

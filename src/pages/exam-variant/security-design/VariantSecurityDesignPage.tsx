@@ -210,7 +210,7 @@ export default defineComponent({
   setup() {
     return () => (
       <div class="wrap">
-        <p class="backlink"><RouterLink to="/variant">← 변형문제 목록으로</RouterLink></p>
+        <p class="backlink"><RouterLink to="/engineer">← 정보처리기사 목록으로</RouterLink></p>
         <header class="hero">
           <h1>기출 변형 — 소프트웨어 개발 보안 설계</h1>
           <p>실기 기출 유형을 변형한 20문제입니다. 정답을 입력하고 제출하면 채점되며, 오답이면 정답과 해설이 함께 표시됩니다.</p>

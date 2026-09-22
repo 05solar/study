@@ -93,6 +93,7 @@ export const router = createRouter({
     // ---------- 학습 노트 ----------
     { path: '/', component: () => import('./pages/home/HomePage'), meta: { title: '개발 학습 노트 — 인증 보안 · 인프라 · 프레임워크 · 데이터베이스' } },
     { path: '/auth-security', component: () => import('./pages/auth-security/AuthSecurityPage'), meta: { title: '로그인/회원가입 시스템 보안 — JWT, OAuth, SSO, Keycloak' } },
+    { path: '/auth-methods', component: () => import('./pages/auth-methods/AuthMethodsPage'), meta: { title: '인증(Authentication) 방법 총정리 — 지식·소유·생체 요소부터 패스키·OAuth·mTLS·IoT까지' } },
     { path: '/infra', component: () => import('./pages/infra/InfraPage'), meta: { title: '인프라 구조 완전 정리 — MSA, Docker, Kubernetes, CI/CD' } },
     { path: '/frameworks', component: () => import('./pages/frameworks/FrameworksPage'), meta: { title: '프론트엔드·백엔드 프레임워크 총정리' } },
     { path: '/database', component: () => import('./pages/database/DatabasePage'), meta: { title: '데이터베이스 완전 정리 — RDB, SQL, 인덱스, 트랜잭션, NoSQL' } },

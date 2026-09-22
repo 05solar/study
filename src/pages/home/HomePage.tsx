@@ -19,18 +19,24 @@ const NOTES: DocEntry[] = [
   },
   {
     num: '02',
+    path: '/auth-methods',
+    title: '인증(Authentication) 방법 총정리',
+    desc: '4대 인증 요소 · 비밀번호/세션/토큰/JWT · OTP · 매직링크 · 패스키/WebAuthn · MFA · OAuth/OIDC/SAML/SSO · LDAP/Kerberos · 인증서/mTLS · API Key/HMAC · SSH · 푸시/QR · 적응형 · IoT · 종합 비교',
+  },
+  {
+    num: '03',
     path: '/infra',
     title: '인프라 구조 완전 정리',
     desc: '모놀리식 · 스케일링 · MSA · Docker · Kubernetes(K8s/K3s/K9s) · 배포 전략 · CI/CD와 GitOps',
   },
   {
-    num: '03',
+    num: '04',
     path: '/frameworks',
     title: '프론트엔드·백엔드 프레임워크 총정리',
     desc: 'React / Vue / Angular / Svelte · Spring / Node / Django / FastAPI / Go · 사용 순위 차트 · 상황별 선택 가이드',
   },
   {
-    num: '04',
+    num: '05',
     path: '/database',
     title: '데이터베이스 완전 정리',
     desc: 'RDB · SQL · 인덱스 · 트랜잭션과 ACID · 격리 수준 · 정규화 · NoSQL과 CAP · 레플리케이션/샤딩/캐시 · ORM',

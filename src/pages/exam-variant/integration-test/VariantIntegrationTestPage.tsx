@@ -298,7 +298,7 @@ export default defineComponent({
   setup() {
     return () => (
       <div class="wrap">
-        <p class="backlink"><RouterLink to="/variant">← 변형문제 목록으로</RouterLink></p>
+        <p class="backlink"><RouterLink to="/engineer">← 정보처리기사 목록으로</RouterLink></p>
 
         <header class="hero">
           <h1>기출 변형 — 애플리케이션 통합 테스트와 결함 관리</h1>

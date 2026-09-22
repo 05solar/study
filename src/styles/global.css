@@ -292,6 +292,51 @@ footer { text-align: center; color: var(--muted); font-size: 1em; margin-top: 28
 .doc-card.folder:hover { background: var(--card); }
 .doc-card.folder .doc-num { background: var(--accent); color: #ffffff; }
 
+/* ---------- 한 줄 리스트 (주제/회차 목록 공용) ---------- */
+.topic-list {
+  border: 1px solid var(--line);
+  background: var(--card);
+  margin-bottom: 18px;
+}
+.topic-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.topic-row:last-child { border-bottom: none; }
+.topic-row:hover { background: var(--accent-soft); }
+.row-btn {
+  flex: 0 0 auto;
+  border: 1px solid var(--accent);
+  padding: 1px 12px;
+  font-size: 1em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.row-btn.summary { background: var(--card); color: var(--accent); }
+.row-btn.summary:hover { background: var(--accent-dark); color: #ffffff; }
+.row-btn.quiz { background: var(--accent); color: #ffffff; }
+.row-btn.quiz:hover { background: var(--accent-dark); }
+.row-num {
+  flex: 0 0 auto;
+  min-width: 28px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.row-title {
+  flex: 1 1 auto;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+}
+.row-title:hover { text-decoration: underline; }
+@media (max-width: 560px) {
+  .topic-row { flex-wrap: wrap; }
+  .row-title { flex-basis: calc(100% - 40px); }
+}
+
 /* 목록 페이지의 그룹 제목 */
 .group-title {
   font-size: 1.05em;
