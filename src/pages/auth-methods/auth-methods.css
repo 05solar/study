@@ -1,1 +1,64 @@
-/* 인증 방법 총정리 페이지 전용 스타일 — 현재 공통 스타일만 사용 */
+/* 인증 방법 총정리 페이지 전용 스타일 */
+
+/* ---------- 35-2. 보안 강도 스펙트럼 (점이 왼→오로 이동) ---------- */
+svg.spectrum .guide {
+  stroke: transparent;
+  stroke-width: 8;
+  fill: none;
+  marker-end: none;
+}
+svg.spectrum .msg.active .guide {
+  stroke: var(--accent);
+  stroke-width: 3;
+  marker-end: none;
+}
+svg.spectrum .tick {
+  stroke: var(--muted);
+  stroke-width: 1.6;
+  marker-end: none;
+}
+svg.spectrum .msg.active .tick {
+  stroke: var(--accent);
+  stroke-width: 2.6;
+  marker-end: none;
+}
+svg.spectrum .axis { stroke: var(--ink); stroke-width: 1.7; marker-end: url(#ah); }
+
+/* ---------- 35-3. 인증 방식 한눈에 비교 (도면 그리드, 2행) ---------- */
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 16px 0;
+}
+.compare-grid .cmp-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  padding: 10px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.compare-grid svg.mini {
+  min-width: 0;
+  width: 100%;
+  height: auto;
+}
+.compare-grid .cmp-name {
+  margin: 2px 0 0;
+  font-size: 0.98em;
+  font-weight: 700;
+  text-align: center;
+}
+.compare-grid .cmp-note {
+  margin: 0;
+  font-size: 0.82em;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.4;
+}
+@media (max-width: 720px) {
+  .compare-grid { grid-template-columns: repeat(2, 1fr); }
+}

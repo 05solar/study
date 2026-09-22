@@ -25,8 +25,8 @@ export default defineComponent({
 
         <div class="box">
           <span class="tag-line">먼저 짚고 갈 것</span><br/>
-          <strong>인증(Authentication)</strong>은 “이 사용자가 이솔하인가?”를 확인하는 일이고,
-          <strong>인가(Authorization)</strong>는 “이솔하가 관리자 페이지에 접근할 권한이 있는가?”를 따지는 일입니다.
+          <strong>인증(Authentication)</strong>은 “이 사용자가 본인이 맞는가?”를 확인하는 일이고,
+          <strong>인가(Authorization)</strong>는 “이 사용자가 관리자 페이지에 접근할 권한이 있는가?”를 따지는 일입니다.
           <code>JWT</code>·<code>OAuth</code>·<code>세션</code>·<code>쿠키</code>는 자주 혼동되지만 같은 종류의 기술이 아닙니다 —
           이 문서 마지막의 <a href="#compare" onClick={(e) => scrollToId(e, 'compare')}>종합 비교</a>에서 정리합니다.
         </div>
@@ -1571,46 +1571,164 @@ export default defineComponent({
 
           <h3>35-2. 보안 강도 스펙트럼 (사용자 인증 수단)</h3>
           <figure class="diagram">
-            <svg class="d anim" viewBox="0 0 900 180" role="img" aria-label="인증 수단 보안 강도 비교 도면">
-              <line class="arrow" x1="40" y1="110" x2="860" y2="110"/>
-              <text x="40" y="150" text-anchor="middle" class="small">약함</text>
-              <text x="860" y="150" text-anchor="middle" class="small">강함</text>
+            <svg class="d anim spectrum" viewBox="0 0 900 180" role="img" aria-label="인증 수단 보안 강도 비교 도면">
+              {/* 기준 축 (약함 → 강함) */}
+              <line class="axis" x1="50" y1="120" x2="855" y2="120"/>
+              <text x="52" y="150" text-anchor="middle" class="small">약함</text>
+              <text x="835" y="150" text-anchor="middle" class="small">강함</text>
 
+              {/* 파란 점이 각 구간을 따라 왼→오로 이동하며 도착 지점을 강조 */}
               <g class="msg" data-step="1">
-                <line class="arrow" x1="120" y1="110" x2="120" y2="80"/>
-                <text x="120" y="66" text-anchor="middle" class="small">비밀번호</text>
+                <line class="guide" x1="60" y1="120" x2="130" y2="120"/>
+                <line class="tick" x1="130" y1="120" x2="130" y2="92"/>
+                <text x="130" y="80" text-anchor="middle" class="small">비밀번호</text>
               </g>
               <g class="msg" data-step="2">
-                <line class="arrow" x1="270" y1="110" x2="270" y2="80"/>
-                <text x="270" y="66" text-anchor="middle" class="small">SMS OTP</text>
+                <line class="guide" x1="130" y1="120" x2="300" y2="120"/>
+                <line class="tick" x1="300" y1="120" x2="300" y2="92"/>
+                <text x="300" y="80" text-anchor="middle" class="small">SMS OTP</text>
               </g>
               <g class="msg" data-step="3">
-                <line class="arrow" x1="420" y1="110" x2="420" y2="80"/>
-                <text x="420" y="66" text-anchor="middle" class="small">TOTP</text>
+                <line class="guide" x1="300" y1="120" x2="470" y2="120"/>
+                <line class="tick" x1="470" y1="120" x2="470" y2="92"/>
+                <text x="470" y="80" text-anchor="middle" class="small">TOTP</text>
               </g>
               <g class="msg" data-step="4">
-                <line class="arrow" x1="570" y1="110" x2="570" y2="80"/>
-                <text x="570" y="66" text-anchor="middle" class="small">푸시(번호일치)</text>
+                <line class="guide" x1="470" y1="120" x2="640" y2="120"/>
+                <line class="tick" x1="640" y1="120" x2="640" y2="92"/>
+                <text x="640" y="80" text-anchor="middle" class="small">푸시(번호일치)</text>
               </g>
               <g class="msg" data-step="5">
-                <line class="arrow" x1="760" y1="110" x2="760" y2="80"/>
-                <text x="760" y="66" text-anchor="middle" class="small">패스키·보안키</text>
+                <line class="guide" x1="640" y1="120" x2="800" y2="120"/>
+                <line class="tick" x1="800" y1="120" x2="800" y2="92"/>
+                <text x="800" y="80" text-anchor="middle" class="small">패스키·보안키</text>
               </g>
             </svg>
-            <figcaption>도면 39. 파란 점이 왼쪽(약함)에서 오른쪽(강함)으로 이동하며 강도 순서를 보여준다. 오른쪽일수록 피싱·탈취에 강하다.</figcaption>
+            <figcaption>도면 39. 파란 점이 왼쪽(약함)에서 오른쪽(강함)으로 이동하며, 지나온 구간과 도착한 수단이 강조된다. 오른쪽일수록 피싱·탈취에 강하다.</figcaption>
           </figure>
 
           <h3>35-3. 인증 방식 한눈에 비교</h3>
-          <table>
-            <tr><th>방식</th><th>상태 저장</th><th>주 사용처</th><th>특징</th></tr>
-            <tr><td>세션</td><td>서버(stateful)</td><td>브라우저 중심 웹</td><td>즉시 무효화 쉬움, 통제력 강함</td></tr>
-            <tr><td>토큰/JWT</td><td>클라이언트(stateless)</td><td>모바일·API·MSA</td><td>확장 쉬움, 강제 폐기 어려움</td></tr>
-            <tr><td>OAuth/OIDC</td><td>인증 서버</td><td>소셜 로그인·SSO</td><td>권한 위임(OAuth)+인증(OIDC)</td></tr>
-            <tr><td>SAML</td><td>IdP</td><td>기업·학교 SSO</td><td>XML, 레거시 호환</td></tr>
-            <tr><td>패스키</td><td>기기(개인키)</td><td>비밀번호 없는 로그인</td><td>피싱에 강함, 최신 권장</td></tr>
-            <tr><td>mTLS</td><td>인증서</td><td>서비스 간·IoT</td><td>상호 인증, 시스템 간</td></tr>
-            <tr><td>API Key / HMAC</td><td>키/Secret</td><td>서버 간·Webhook</td><td>앱 식별·요청 서명</td></tr>
-          </table>
+          <p class="sub">각 방식의 대표 구조를 도면으로 나란히 놓고 비교한다.</p>
+          <div class="compare-grid">
+            {/* 세션 */}
+            <div class="cmp-card">
+              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="세션 방식 도면">
+                <rect class="box" x="12" y="34" width="98" height="42"/>
+                <text x="61" y="60" text-anchor="middle" class="small">브라우저</text>
+                <rect class="box" x="150" y="34" width="98" height="42"/>
+                <text x="199" y="60" text-anchor="middle" class="small">서버</text>
+                <rect class="boxsoft" x="150" y="100" width="98" height="38"/>
+                <text x="199" y="118" text-anchor="middle" class="small">세션 저장소</text>
+                <text x="199" y="132" text-anchor="middle" class="small">(Redis)</text>
+                <line class="arrow" x1="110" y1="55" x2="150" y2="55"/>
+                <text x="130" y="26" text-anchor="middle" class="small">sid</text>
+                <line class="arrow" x1="199" y1="76" x2="199" y2="100"/>
+              </svg>
+              <p class="cmp-name">세션</p>
+              <p class="cmp-note">서버 저장 · 즉시 무효화 쉬움 · 브라우저 중심 웹</p>
+            </div>
+
+            {/* 토큰 / JWT */}
+            <div class="cmp-card">
+              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="토큰/JWT 방식 도면">
+                <rect class="box" x="12" y="34" width="98" height="42"/>
+                <text x="61" y="60" text-anchor="middle" class="small">클라이언트</text>
+                <rect class="boxdark" x="16" y="96" width="90" height="34"/>
+                <text x="61" y="117" text-anchor="middle" class="small ondark">JWT 보관</text>
+                <rect class="box" x="150" y="34" width="98" height="42"/>
+                <text x="199" y="60" text-anchor="middle" class="small">서버</text>
+                <text x="199" y="120" text-anchor="middle" class="small">상태 저장 X</text>
+                <line class="arrow" x1="110" y1="55" x2="150" y2="55"/>
+                <text x="130" y="26" text-anchor="middle" class="small">Bearer</text>
+              </svg>
+              <p class="cmp-name">토큰 / JWT</p>
+              <p class="cmp-note">클라이언트 보관 · 확장 쉬움 · 모바일·API·MSA</p>
+            </div>
+
+            {/* OAuth / OIDC */}
+            <div class="cmp-card">
+              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="OAuth/OIDC 방식 도면">
+                <rect class="box" x="6" y="55" width="72" height="40"/>
+                <text x="42" y="79" text-anchor="middle" class="small">사용자</text>
+                <rect class="box" x="94" y="55" width="72" height="40"/>
+                <text x="130" y="79" text-anchor="middle" class="small">내 앱</text>
+                <rect class="boxdark" x="182" y="55" width="72" height="40"/>
+                <text x="218" y="79" text-anchor="middle" class="small ondark">공급자</text>
+                <line class="arrow" x1="78" y1="75" x2="94" y2="75"/>
+                <line class="arrow" x1="166" y1="75" x2="182" y2="75"/>
+                <text x="218" y="115" text-anchor="middle" class="small">토큰 위임</text>
+              </svg>
+              <p class="cmp-name">OAuth / OIDC</p>
+              <p class="cmp-note">권한 위임(OAuth)+인증(OIDC) · 소셜 로그인·SSO</p>
+            </div>
+
+            {/* SAML */}
+            <div class="cmp-card">
+              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="SAML 방식 도면">
+                <rect class="box" x="6" y="55" width="72" height="40"/>
+                <text x="42" y="79" text-anchor="middle" class="small">브라우저</text>
+                <rect class="box" x="94" y="55" width="72" height="40"/>
+                <text x="130" y="79" text-anchor="middle" class="small">SP</text>
+                <rect class="boxdark" x="182" y="55" width="72" height="40"/>
+                <text x="218" y="79" text-anchor="middle" class="small ondark">IdP</text>
+                <line class="arrow" x1="78" y1="70" x2="94" y2="70"/>
+                <line class="arrow" x1="166" y1="70" x2="182" y2="70"/>
+                <text x="130" y="118" text-anchor="middle" class="small">XML Assertion</text>
+              </svg>
+              <p class="cmp-name">SAML</p>
+              <p class="cmp-note">IdP 발급 · XML·레거시 호환 · 기업·학교 SSO</p>
+            </div>
+
+            {/* 패스키 */}
+            <div class="cmp-card">
+              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="패스키 방식 도면">
+                <rect class="box" x="12" y="45" width="100" height="46"/>
+                <text x="62" y="66" text-anchor="middle" class="small">기기</text>
+                <text x="62" y="82" text-anchor="middle" class="small">개인키</text>
+                <rect class="box" x="150" y="45" width="100" height="46"/>
+                <text x="200" y="66" text-anchor="middle" class="small">서버</text>
+                <text x="200" y="82" text-anchor="middle" class="small">공개키</text>
+                <line class="arrow ret" x1="150" y1="58" x2="112" y2="58"/>
+                <text x="131" y="38" text-anchor="middle" class="small">Challenge</text>
+                <line class="arrow" x1="112" y1="82" x2="150" y2="82"/>
+                <text x="131" y="112" text-anchor="middle" class="small">서명</text>
+              </svg>
+              <p class="cmp-name">패스키</p>
+              <p class="cmp-note">기기 개인키 · 피싱에 강함 · 비밀번호 없는 로그인(권장)</p>
+            </div>
+
+            {/* mTLS */}
+            <div class="cmp-card">
+              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="mTLS 방식 도면">
+                <rect class="box" x="10" y="45" width="104" height="46"/>
+                <text x="62" y="66" text-anchor="middle" class="small">클라이언트</text>
+                <text x="62" y="82" text-anchor="middle" class="small">인증서</text>
+                <rect class="box" x="148" y="45" width="104" height="46"/>
+                <text x="200" y="66" text-anchor="middle" class="small">서버</text>
+                <text x="200" y="82" text-anchor="middle" class="small">인증서</text>
+                <line class="arrow" x1="114" y1="58" x2="148" y2="58"/>
+                <line class="arrow" x1="148" y1="80" x2="114" y2="80"/>
+                <text x="131" y="112" text-anchor="middle" class="small">상호 검증</text>
+              </svg>
+              <p class="cmp-name">mTLS</p>
+              <p class="cmp-note">양쪽 인증서 · 상호 인증 · 서비스 간·IoT</p>
+            </div>
+
+            {/* API Key / HMAC */}
+            <div class="cmp-card">
+              <svg class="d mini" viewBox="0 0 260 150" role="img" aria-label="API Key / HMAC 방식 도면">
+                <rect class="box" x="12" y="45" width="100" height="46"/>
+                <text x="62" y="72" text-anchor="middle" class="small">호출 앱</text>
+                <rect class="box" x="150" y="45" width="100" height="46"/>
+                <text x="200" y="72" text-anchor="middle" class="small">서버 API</text>
+                <line class="arrow" x1="112" y1="68" x2="150" y2="68"/>
+                <text x="131" y="36" text-anchor="middle" class="small">API Key</text>
+                <text x="131" y="112" text-anchor="middle" class="small">+ HMAC 서명</text>
+              </svg>
+              <p class="cmp-name">API Key / HMAC</p>
+              <p class="cmp-note">키·Secret · 앱 식별·요청 서명 · 서버 간·Webhook</p>
+            </div>
+          </div>
 
           <h3>35-4. 프로젝트별 추천</h3>
           <table>
