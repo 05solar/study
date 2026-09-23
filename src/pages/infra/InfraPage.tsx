@@ -1,5 +1,6 @@
 import { defineComponent, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { pc, srv, db, person } from '../../shared/deviceIcons'
 import { ArrowDefs } from '../../shared/ArrowDefs'
 import { useFlowAnimation } from '../../shared/useFlowAnimation'
 import { scrollToId } from '../../shared/scroll'
@@ -69,9 +70,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 310" role="img" aria-label="모놀리식 구조 도면">
-              <rect class="box" x="30" y="120" width="140" height="70"/>
-              <text x="100" y="150" text-anchor="middle" class="strong">사용자</text>
-              <text x="100" y="172" text-anchor="middle" class="small">브라우저 / 앱</text>
+              {person(100, '사용자', 120)}
+              <text x="100" y="198" text-anchor="middle" class="small">브라우저 / 앱</text>
 
               {/* 모놀리스 */}
               <rect class="box" x="250" y="40" width="380" height="230"/>
@@ -86,12 +86,11 @@ export default defineComponent({
               <rect class="boxsoft" x="450" y="165" width="160" height="60"/>
               <text x="530" y="200" text-anchor="middle">결제 모듈</text>
 
-              <rect class="box" x="720" y="120" width="150" height="80"/>
-              <text x="795" y="152" text-anchor="middle" class="strong">단일 DB</text>
-              <text x="795" y="174" text-anchor="middle" class="small">모든 테이블</text>
+              {db(795, '단일 DB', 120)}
+              <text x="795" y="194" text-anchor="middle" class="small">모든 테이블</text>
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="170" y1="155" x2="244" y2="155"/>
+                <line class="arrow" x1="118" y1="155" x2="244" y2="155"/>
                 <text x="207" y="110" text-anchor="middle" class="small">1. 요청</text>
               </g>
               <g class="msg" data-step="2">
@@ -99,7 +98,7 @@ export default defineComponent({
                 <text x="440" y="292" text-anchor="middle" class="small">2. 모듈 간 호출은 같은 프로세스 안의 메서드 호출 (매우 빠름)</text>
               </g>
               <g class="msg" data-step="3">
-                <line class="arrow" x1="630" y1="155" x2="714" y2="155"/>
+                <line class="arrow" x1="630" y1="155" x2="773" y2="155"/>
                 <text x="672" y="110" text-anchor="middle" class="small">3. DB 조회</text>
               </g>
             </svg>
@@ -131,30 +130,24 @@ export default defineComponent({
             <svg class="d" viewBox="0 0 900 300" role="img" aria-label="스케일 업과 스케일 아웃 비교 도면">
               {/* 스케일 업 */}
               <text x="225" y="35" text-anchor="middle" class="strong">스케일 업 (수직 확장)</text>
-              <rect class="boxsoft" x="150" y="180" width="150" height="70"/>
-              <text x="225" y="212" text-anchor="middle">서버 1대</text>
-              <text x="225" y="232" text-anchor="middle" class="small">4코어 / 8GB</text>
-              <rect class="box" x="130" y="60" width="190" height="90"/>
-              <text x="225" y="95" text-anchor="middle">더 좋은 서버 1대</text>
-              <text x="225" y="118" text-anchor="middle" class="small">32코어 / 128GB</text>
-              <line class="arrow" x1="225" y1="174" x2="225" y2="156"/>
+              {srv(225, '서버 1대', 180)}
+              <text x="225" y="258" text-anchor="middle" class="small">4코어 / 8GB</text>
+              {srv(225, '더 좋은 서버 1대', 60)}
+              <text x="225" y="138" text-anchor="middle" class="small">32코어 / 128GB</text>
+              <line class="arrow" x1="225" y1="176" x2="225" y2="146"/>
               <text x="225" y="280" text-anchor="middle" class="small">단순하지만 한계와 비용 급증, 서버가 죽으면 전체 중단</text>
 
               <line class="life" x1="450" y1="30" x2="450" y2="270"/>
 
               {/* 스케일 아웃 */}
               <text x="675" y="35" text-anchor="middle" class="strong">스케일 아웃 (수평 확장)</text>
-              <rect class="box" x="600" y="60" width="150" height="56"/>
-              <text x="675" y="95" text-anchor="middle">로드밸런서</text>
-              <rect class="boxsoft" x="510" y="180" width="100" height="66"/>
-              <text x="560" y="218" text-anchor="middle">서버 1</text>
-              <rect class="boxsoft" x="625" y="180" width="100" height="66"/>
-              <text x="675" y="218" text-anchor="middle">서버 2</text>
-              <rect class="boxsoft" x="740" y="180" width="100" height="66"/>
-              <text x="790" y="218" text-anchor="middle">서버 3</text>
-              <line class="arrow" x1="640" y1="116" x2="565" y2="174"/>
-              <line class="arrow" x1="675" y1="116" x2="675" y2="174"/>
-              <line class="arrow" x1="710" y1="116" x2="785" y2="174"/>
+              {srv(675, '로드밸런서', 60)}
+              {srv(560, '서버 1', 180)}
+              {srv(675, '서버 2', 180)}
+              {srv(790, '서버 3', 180)}
+              <line class="arrow" x1="640" y1="124" x2="560" y2="174"/>
+              <line class="arrow" x1="675" y1="124" x2="675" y2="174"/>
+              <line class="arrow" x1="710" y1="124" x2="790" y2="174"/>
               <text x="675" y="280" text-anchor="middle" class="small">평범한 서버 여러 대 — 무한 확장 가능, 1대가 죽어도 서비스 유지</text>
             </svg>
             <figcaption>도면 2. 스케일 업은 서버를 키우고, 스케일 아웃은 서버 수를 늘린다. 현대 인프라의 기본 전제는 스케일 아웃이다.</figcaption>
@@ -169,50 +162,44 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 370" role="img" aria-label="3계층 구조와 캐시 도면">
-              <rect class="box" x="30" y="150" width="120" height="64"/>
-              <text x="90" y="188" text-anchor="middle" class="strong">사용자</text>
+              {person(90, '사용자', 150)}
 
-              <rect class="box" x="210" y="150" width="140" height="64"/>
-              <text x="280" y="178" text-anchor="middle" class="strong">로드밸런서</text>
-              <text x="280" y="200" text-anchor="middle" class="small">Nginx / ELB</text>
+              {srv(280, '로드밸런서', 150)}
+              <text x="280" y="228" text-anchor="middle" class="small">Nginx / ELB</text>
 
-              <rect class="box" x="420" y="70" width="140" height="64"/>
-              <text x="490" y="98" text-anchor="middle" class="strong">WAS 1</text>
-              <text x="490" y="120" text-anchor="middle" class="small">stateless</text>
-              <rect class="box" x="420" y="230" width="140" height="64"/>
-              <text x="490" y="258" text-anchor="middle" class="strong">WAS 2</text>
-              <text x="490" y="280" text-anchor="middle" class="small">stateless</text>
+              {srv(490, 'WAS 1', 70)}
+              <text x="490" y="148" text-anchor="middle" class="small">stateless</text>
+              {srv(490, 'WAS 2', 230)}
+              <text x="490" y="308" text-anchor="middle" class="small">stateless</text>
 
-              <rect class="box" x="640" y="70" width="140" height="64"/>
-              <text x="710" y="98" text-anchor="middle" class="strong">캐시 (Redis)</text>
-              <text x="710" y="120" text-anchor="middle" class="small">자주 읽는 데이터</text>
-              <rect class="box" x="640" y="230" width="140" height="64"/>
-              <text x="710" y="258" text-anchor="middle" class="strong">DB</text>
-              <text x="710" y="280" text-anchor="middle" class="small">원본 데이터</text>
+              {db(710, '캐시 (Redis)', 70)}
+              <text x="710" y="144" text-anchor="middle" class="small">자주 읽는 데이터</text>
+              {db(710, 'DB', 230)}
+              <text x="710" y="304" text-anchor="middle" class="small">원본 데이터</text>
 
               <g class="static">
-                <line class="blocked" x1="350" y1="195" x2="416" y2="255"/>
+                <line class="blocked" x1="305" y1="200" x2="468" y2="250"/>
               </g>
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="150" y1="182" x2="204" y2="182"/>
+                <line class="arrow" x1="106" y1="182" x2="258" y2="182"/>
                 <text x="177" y="140" text-anchor="middle" class="small">1. 요청</text>
               </g>
               <g class="msg" data-step="2">
-                <line class="arrow" x1="350" y1="170" x2="414" y2="110"/>
+                <line class="arrow" x1="300" y1="170" x2="468" y2="110"/>
                 <text x="380" y="120" text-anchor="middle" class="small">2. 분배</text>
               </g>
               <g class="msg" data-step="3">
-                <line class="arrow" x1="560" y1="102" x2="634" y2="102"/>
+                <line class="arrow" x1="510" y1="102" x2="688" y2="102"/>
                 <text x="597" y="60" text-anchor="middle" class="small">3. 캐시 먼저 조회</text>
               </g>
               <g class="msg" data-step="4">
-                <line class="arrow" x1="710" y1="134" x2="710" y2="224"/>
+                <line class="arrow" x1="710" y1="150" x2="710" y2="224"/>
                 <text x="800" y="185" text-anchor="middle" class="small">4. 캐시 미스면</text>
                 <text x="800" y="203" text-anchor="middle" class="small">DB 조회</text>
               </g>
               <g class="msg" data-step="5">
-                <path class="arrow ret" d="M 640 280 C 400 350 150 320 95 220"/>
+                <path class="arrow ret" d="M 690 292 C 400 350 150 320 92 216"/>
                 <text x="380" y="345" text-anchor="middle" class="small">5. 응답 (다음부터는 캐시에서 바로 반환)</text>
               </g>
             </svg>
@@ -244,29 +231,22 @@ export default defineComponent({
               <text x="165" y="161" text-anchor="middle" class="small">주문</text>
               <rect class="boxsoft" x="240" y="135" width="100" height="40"/>
               <text x="290" y="161" text-anchor="middle" class="small">결제</text>
-              <rect class="box" x="150" y="230" width="150" height="60"/>
-              <text x="225" y="266" text-anchor="middle">공유 DB 1개</text>
+              {db(225, '공유 DB 1개', 230)}
               <line class="arrow" x1="225" y1="190" x2="225" y2="224"/>
               <text x="225" y="318" text-anchor="middle" class="small">배포 1개 / DB 1개 / 전체가 운명 공동체</text>
 
               <line class="life" x1="450" y1="30" x2="450" y2="300"/>
 
               <text x="675" y="35" text-anchor="middle" class="strong">MSA</text>
-              <rect class="box" x="490" y="60" width="110" height="56"/>
-              <text x="545" y="94" text-anchor="middle" class="small">회원 서비스</text>
-              <rect class="box" x="620" y="60" width="110" height="56"/>
-              <text x="675" y="94" text-anchor="middle" class="small">상품 서비스</text>
-              <rect class="box" x="750" y="60" width="110" height="56"/>
-              <text x="805" y="94" text-anchor="middle" class="small">주문 서비스</text>
-              <rect class="boxsoft" x="490" y="150" width="110" height="46"/>
-              <text x="545" y="178" text-anchor="middle" class="small">회원 DB</text>
-              <rect class="boxsoft" x="620" y="150" width="110" height="46"/>
-              <text x="675" y="178" text-anchor="middle" class="small">상품 DB</text>
-              <rect class="boxsoft" x="750" y="150" width="110" height="46"/>
-              <text x="805" y="178" text-anchor="middle" class="small">주문 DB</text>
-              <line class="arrow" x1="545" y1="116" x2="545" y2="144"/>
-              <line class="arrow" x1="675" y1="116" x2="675" y2="144"/>
-              <line class="arrow" x1="805" y1="116" x2="805" y2="144"/>
+              {srv(545, '회원 서비스', 60)}
+              {srv(675, '상품 서비스', 60)}
+              {srv(805, '주문 서비스', 60)}
+              {db(545, '회원 DB', 150)}
+              {db(675, '상품 DB', 150)}
+              {db(805, '주문 DB', 150)}
+              <line class="arrow" x1="545" y1="128" x2="545" y2="148"/>
+              <line class="arrow" x1="675" y1="128" x2="675" y2="148"/>
+              <line class="arrow" x1="805" y1="128" x2="805" y2="148"/>
               <text x="675" y="240" text-anchor="middle" class="small">서비스마다 독립 배포 / 독립 DB / 독립 확장</text>
               <text x="675" y="264" text-anchor="middle" class="small">서로는 네트워크(API/메시지)로만 통신</text>
               <text x="675" y="318" text-anchor="middle" class="small">언어·기술도 서비스마다 자유롭게 선택 가능</text>
@@ -278,55 +258,46 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 440" role="img" aria-label="MSA 구조와 동기·비동기 통신 도면">
-              <rect class="box" x="30" y="180" width="130" height="64"/>
-              <text x="95" y="218" text-anchor="middle" class="strong">클라이언트</text>
+              {pc(95, '클라이언트', 180)}
 
-              <rect class="box" x="220" y="180" width="140" height="64"/>
-              <text x="290" y="208" text-anchor="middle" class="strong">API Gateway</text>
-              <text x="290" y="230" text-anchor="middle" class="small">인증·라우팅·제한</text>
+              {srv(290, 'API Gateway', 180)}
+              <text x="290" y="258" text-anchor="middle" class="small">인증·라우팅·제한</text>
 
-              <rect class="box" x="420" y="60" width="140" height="56"/>
-              <text x="490" y="94" text-anchor="middle" class="strong">주문 서비스</text>
-              <rect class="box" x="420" y="190" width="140" height="56"/>
-              <text x="490" y="224" text-anchor="middle" class="strong">결제 서비스</text>
-              <rect class="box" x="420" y="320" width="140" height="56"/>
-              <text x="490" y="354" text-anchor="middle" class="strong">알림 서비스</text>
+              {srv(490, '주문 서비스', 60)}
+              {srv(490, '결제 서비스', 190)}
+              {srv(490, '알림 서비스', 320)}
 
-              <rect class="boxsoft" x="590" y="66" width="100" height="44"/>
-              <text x="640" y="93" text-anchor="middle" class="small">주문 DB</text>
-              <rect class="boxsoft" x="590" y="196" width="100" height="44"/>
-              <text x="640" y="223" text-anchor="middle" class="small">결제 DB</text>
-              <rect class="boxsoft" x="590" y="326" width="100" height="44"/>
-              <text x="640" y="353" text-anchor="middle" class="small">알림 DB</text>
+              {db(640, '주문 DB', 66)}
+              {db(640, '결제 DB', 196)}
+              {db(640, '알림 DB', 326)}
               <g class="static">
-                <line class="blocked" x1="560" y1="88" x2="584" y2="88"/>
-                <line class="blocked" x1="560" y1="218" x2="584" y2="218"/>
-                <line class="blocked" x1="560" y1="348" x2="584" y2="348"/>
+                <line class="blocked" x1="510" y1="88" x2="618" y2="88"/>
+                <line class="blocked" x1="510" y1="218" x2="618" y2="218"/>
+                <line class="blocked" x1="510" y1="348" x2="618" y2="348"/>
               </g>
 
-              <rect class="box" x="730" y="180" width="150" height="80"/>
-              <text x="805" y="212" text-anchor="middle" class="strong">메시지 큐</text>
-              <text x="805" y="234" text-anchor="middle" class="small">Kafka / RabbitMQ</text>
+              {db(805, '메시지 큐', 180)}
+              <text x="805" y="254" text-anchor="middle" class="small">Kafka / RabbitMQ</text>
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="160" y1="212" x2="214" y2="212"/>
+                <line class="arrow" x1="125" y1="212" x2="268" y2="212"/>
                 <text x="187" y="168" text-anchor="middle" class="small">1. 주문 요청</text>
               </g>
               <g class="msg" data-step="2">
-                <line class="arrow" x1="360" y1="200" x2="414" y2="100"/>
+                <line class="arrow" x1="310" y1="200" x2="468" y2="100"/>
                 <text x="352" y="130" text-anchor="middle" class="small">2. 라우팅</text>
               </g>
               <g class="msg" data-step="3">
-                <line class="arrow" x1="470" y1="116" x2="470" y2="184"/>
+                <line class="arrow" x1="490" y1="128" x2="490" y2="184"/>
                 <text x="390" y="155" text-anchor="middle" class="small">3. 동기 호출</text>
                 <text x="390" y="173" text-anchor="middle" class="small">REST / gRPC</text>
               </g>
               <g class="msg" data-step="4">
-                <path class="arrow" d="M 560 100 C 700 110 760 140 790 174"/>
+                <path class="arrow" d="M 510 100 C 700 110 760 145 795 176"/>
                 <text x="775" y="152" text-anchor="middle" class="small">4. "주문 완료" 이벤트 발행</text>
               </g>
               <g class="msg" data-step="5">
-                <path class="arrow" d="M 790 266 C 760 330 640 348 566 348"/>
+                <path class="arrow" d="M 800 262 C 760 330 640 348 512 348"/>
                 <text x="768" y="398" text-anchor="middle" class="small">5. 이벤트 구독 (비동기)</text>
               </g>
             </svg>
@@ -482,9 +453,8 @@ docker run -d -p 8080:8080 myapp:1.0`}</code></pre>
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 560" role="img" aria-label="쿠버네티스 클러스터 구조 도면">
-              <rect class="box" x="25" y="80" width="140" height="64"/>
-              <text x="95" y="106" text-anchor="middle" class="strong">개발자</text>
-              <text x="95" y="128" text-anchor="middle" class="small">kubectl</text>
+              {person(95, '개발자', 80)}
+              <text x="95" y="158" text-anchor="middle" class="small">kubectl</text>
 
               {/* 컨트롤 플레인 */}
               <rect class="box" x="200" y="35" width="675" height="175"/>
@@ -534,7 +504,7 @@ docker run -d -p 8080:8080 myapp:1.0`}</code></pre>
               <text x="715" y="495" text-anchor="middle" class="small">+ 컨테이너 런타임</text>
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="165" y1="112" x2="209" y2="112"/>
+                <line class="arrow" x1="113" y1="112" x2="209" y2="112"/>
                 <text x="95" y="175" text-anchor="middle" class="small">1. kubectl apply</text>
                 <text x="95" y="193" text-anchor="middle" class="small">"3개 떠 있어야 함"</text>
               </g>
@@ -596,16 +566,13 @@ docker run -d -p 8080:8080 myapp:1.0`}</code></pre>
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 310" role="img" aria-label="Ingress-Service-Pod 트래픽 경로 도면">
-              <rect class="box" x="30" y="125" width="120" height="64"/>
-              <text x="90" y="163" text-anchor="middle" class="strong">사용자</text>
+              {person(90, '사용자', 125)}
 
-              <rect class="box" x="210" y="125" width="140" height="64"/>
-              <text x="280" y="153" text-anchor="middle" class="strong">Ingress</text>
-              <text x="280" y="175" text-anchor="middle" class="small">도메인/경로 규칙</text>
+              {srv(280, 'Ingress', 125)}
+              <text x="280" y="203" text-anchor="middle" class="small">도메인/경로 규칙</text>
 
-              <rect class="box" x="410" y="125" width="140" height="64"/>
-              <text x="480" y="153" text-anchor="middle" class="strong">Service</text>
-              <text x="480" y="175" text-anchor="middle" class="small">고정 접점 + 분배</text>
+              {srv(480, 'Service', 125)}
+              <text x="480" y="203" text-anchor="middle" class="small">고정 접점 + 분배</text>
 
               <rect class="box" x="610" y="35" width="260" height="250"/>
               <text x="630" y="62" class="strong">Deployment (replicas: 3)</text>
@@ -617,20 +584,20 @@ docker run -d -p 8080:8080 myapp:1.0`}</code></pre>
               <text x="690" y="240" text-anchor="middle" class="small">Pod 3</text>
 
               <g class="static">
-                <line class="blocked" x1="550" y1="150" x2="634" y2="105"/>
-                <line class="blocked" x1="550" y1="165" x2="634" y2="235"/>
+                <line class="blocked" x1="502" y1="150" x2="634" y2="105"/>
+                <line class="blocked" x1="502" y1="165" x2="634" y2="235"/>
               </g>
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="150" y1="157" x2="204" y2="157"/>
+                <line class="arrow" x1="106" y1="157" x2="258" y2="157"/>
                 <text x="177" y="115" text-anchor="middle" class="small">1. HTTPS</text>
               </g>
               <g class="msg" data-step="2">
-                <line class="arrow" x1="350" y1="157" x2="404" y2="157"/>
+                <line class="arrow" x1="302" y1="157" x2="458" y2="157"/>
                 <text x="377" y="115" text-anchor="middle" class="small">2. 규칙 매칭</text>
               </g>
               <g class="msg" data-step="3">
-                <line class="arrow" x1="550" y1="157" x2="634" y2="170"/>
+                <line class="arrow" x1="502" y1="157" x2="634" y2="170"/>
                 <text x="590" y="210" text-anchor="middle" class="small">3. 분배</text>
               </g>
             </svg>
@@ -819,60 +786,53 @@ spec:
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 420" role="img" aria-label="사용자 요청의 전체 여정 도면">
-              <rect class="box" x="30" y="60" width="140" height="64"/>
-              <text x="100" y="98" text-anchor="middle" class="strong">사용자</text>
+              {person(100, '사용자', 60)}
 
-              <rect class="box" x="250" y="60" width="140" height="64"/>
-              <text x="320" y="88" text-anchor="middle" class="strong">DNS</text>
-              <text x="320" y="110" text-anchor="middle" class="small">도메인을 IP로</text>
+              {srv(320, 'DNS', 60)}
+              <text x="320" y="138" text-anchor="middle" class="small">도메인을 IP로</text>
 
-              <rect class="box" x="470" y="60" width="140" height="64"/>
-              <text x="540" y="88" text-anchor="middle" class="strong">로드밸런서</text>
-              <text x="540" y="110" text-anchor="middle" class="small">클라우드 LB</text>
+              {srv(540, '로드밸런서', 60)}
+              <text x="540" y="138" text-anchor="middle" class="small">클라우드 LB</text>
 
-              <rect class="box" x="690" y="60" width="150" height="64"/>
-              <text x="765" y="88" text-anchor="middle" class="strong">Ingress</text>
-              <text x="765" y="110" text-anchor="middle" class="small">TLS 종료, 라우팅</text>
+              {srv(765, 'Ingress', 60)}
+              <text x="765" y="138" text-anchor="middle" class="small">TLS 종료, 라우팅</text>
 
-              <rect class="box" x="690" y="250" width="150" height="64"/>
-              <text x="765" y="278" text-anchor="middle" class="strong">Service</text>
-              <text x="765" y="300" text-anchor="middle" class="small">Pod 선택·분배</text>
+              {srv(765, 'Service', 250)}
+              <text x="765" y="328" text-anchor="middle" class="small">Pod 선택·분배</text>
 
-              <rect class="box" x="470" y="250" width="140" height="64"/>
-              <text x="540" y="278" text-anchor="middle" class="strong">Pod (앱)</text>
-              <text x="540" y="300" text-anchor="middle" class="small">비즈니스 로직</text>
+              {srv(540, 'Pod (앱)', 250)}
+              <text x="540" y="328" text-anchor="middle" class="small">비즈니스 로직</text>
 
-              <rect class="box" x="250" y="250" width="140" height="64"/>
-              <text x="320" y="278" text-anchor="middle" class="strong">DB / 캐시</text>
-              <text x="320" y="300" text-anchor="middle" class="small">데이터 계층</text>
+              {db(320, 'DB / 캐시', 250)}
+              <text x="320" y="324" text-anchor="middle" class="small">데이터 계층</text>
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="170" y1="92" x2="244" y2="92"/>
+                <line class="arrow" x1="116" y1="92" x2="298" y2="92"/>
                 <text x="207" y="50" text-anchor="middle" class="small">1. 도메인 조회</text>
               </g>
               <g class="msg" data-step="2">
-                <line class="arrow" x1="390" y1="92" x2="464" y2="92"/>
+                <line class="arrow" x1="342" y1="92" x2="518" y2="92"/>
                 <text x="427" y="50" text-anchor="middle" class="small">2. IP로 접속</text>
               </g>
               <g class="msg" data-step="3">
-                <line class="arrow" x1="610" y1="92" x2="684" y2="92"/>
+                <line class="arrow" x1="562" y1="92" x2="743" y2="92"/>
                 <text x="647" y="50" text-anchor="middle" class="small">3. 클러스터 진입</text>
               </g>
               <g class="msg" data-step="4">
-                <line class="arrow" x1="765" y1="124" x2="765" y2="244"/>
+                <line class="arrow" x1="765" y1="150" x2="765" y2="244"/>
                 <text x="850" y="180" text-anchor="middle" class="small">4. 규칙</text>
                 <text x="850" y="198" text-anchor="middle" class="small">매칭</text>
               </g>
               <g class="msg" data-step="5">
-                <line class="arrow" x1="690" y1="282" x2="616" y2="282"/>
+                <line class="arrow" x1="743" y1="282" x2="562" y2="282"/>
                 <text x="653" y="240" text-anchor="middle" class="small">5. Pod 분배</text>
               </g>
               <g class="msg" data-step="6">
-                <line class="arrow" x1="470" y1="282" x2="396" y2="282"/>
+                <line class="arrow" x1="518" y1="282" x2="342" y2="282"/>
                 <text x="433" y="240" text-anchor="middle" class="small">6. 조회/저장</text>
               </g>
               <g class="msg" data-step="7">
-                <path class="arrow ret" d="M 470 314 C 300 400 120 360 95 130"/>
+                <path class="arrow ret" d="M 512 320 C 300 400 120 360 98 128"/>
                 <text x="290" y="390" text-anchor="middle" class="small">7. 응답 (역순으로 반환)</text>
               </g>
               <text x="450" y="200" text-anchor="middle" class="small">정적 파일(이미지/JS)은 이 여정 대신 CDN 엣지에서 바로 반환된다</text>
@@ -898,60 +858,54 @@ spec:
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 440" role="img" aria-label="CI/CD GitOps 파이프라인 도면">
-              <rect class="box" x="30" y="60" width="130" height="64"/>
-              <text x="95" y="98" text-anchor="middle" class="strong">개발자</text>
+              {person(95, '개발자', 60)}
 
-              <rect class="box" x="240" y="60" width="150" height="64"/>
-              <text x="315" y="88" text-anchor="middle" class="strong">앱 코드 Git</text>
-              <text x="315" y="110" text-anchor="middle" class="small">GitHub</text>
+              {db(315, '앱 코드 Git', 60)}
+              <text x="315" y="134" text-anchor="middle" class="small">GitHub</text>
 
-              <rect class="box" x="470" y="60" width="150" height="64"/>
-              <text x="545" y="88" text-anchor="middle" class="strong">CI 서버</text>
-              <text x="545" y="110" text-anchor="middle" class="small">테스트 + 빌드</text>
+              {srv(545, 'CI 서버', 60)}
+              <text x="545" y="138" text-anchor="middle" class="small">테스트 + 빌드</text>
 
-              <rect class="box" x="700" y="60" width="170" height="64"/>
-              <text x="785" y="88" text-anchor="middle" class="strong">이미지 레지스트리</text>
-              <text x="785" y="110" text-anchor="middle" class="small">order:1.2.1 저장</text>
+              {db(785, '이미지 레지스트리', 60)}
+              <text x="785" y="134" text-anchor="middle" class="small">order:1.2.1 저장</text>
 
-              <rect class="box" x="240" y="270" width="150" height="64"/>
-              <text x="315" y="298" text-anchor="middle" class="strong">매니페스트 Git</text>
-              <text x="315" y="320" text-anchor="middle" class="small">K8s YAML 저장소</text>
+              {db(315, '매니페스트 Git', 270)}
+              <text x="315" y="344" text-anchor="middle" class="small">K8s YAML 저장소</text>
 
-              <rect class="box" x="470" y="270" width="150" height="64"/>
-              <text x="545" y="298" text-anchor="middle" class="strong">ArgoCD</text>
-              <text x="545" y="320" text-anchor="middle" class="small">Git과 클러스터 동기화</text>
+              {srv(545, 'ArgoCD', 270)}
+              <text x="545" y="348" text-anchor="middle" class="small">Git과 클러스터 동기화</text>
 
               <rect class="box" x="700" y="250" width="170" height="100"/>
               <text x="785" y="290" text-anchor="middle" class="strong">K8s 클러스터</text>
               <text x="785" y="314" text-anchor="middle" class="small">새 버전 롤링 배포</text>
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="160" y1="92" x2="234" y2="92"/>
+                <line class="arrow" x1="111" y1="92" x2="293" y2="92"/>
                 <text x="197" y="50" text-anchor="middle" class="small">1. git push</text>
               </g>
               <g class="msg" data-step="2">
-                <line class="arrow" x1="390" y1="92" x2="464" y2="92"/>
+                <line class="arrow" x1="337" y1="92" x2="523" y2="92"/>
                 <text x="427" y="50" text-anchor="middle" class="small">2. CI 트리거</text>
               </g>
               <g class="msg" data-step="3">
-                <line class="arrow" x1="620" y1="92" x2="694" y2="92"/>
+                <line class="arrow" x1="567" y1="92" x2="763" y2="92"/>
                 <text x="657" y="50" text-anchor="middle" class="small">3. 이미지 push</text>
               </g>
               <g class="msg" data-step="4">
-                <path class="arrow" d="M 545 124 C 545 200 400 220 330 264"/>
+                <path class="arrow" d="M 545 150 C 545 210 400 230 315 266"/>
                 <text x="415" y="200" text-anchor="middle" class="small">4. 이미지 태그를</text>
                 <text x="415" y="218" text-anchor="middle" class="small">1.2.1로 수정 커밋</text>
               </g>
               <g class="msg" data-step="5">
-                <line class="arrow" x1="390" y1="302" x2="464" y2="302"/>
+                <line class="arrow" x1="337" y1="302" x2="523" y2="302"/>
                 <text x="427" y="260" text-anchor="middle" class="small">5. 변경 감지</text>
               </g>
               <g class="msg" data-step="6">
-                <line class="arrow" x1="620" y1="302" x2="694" y2="302"/>
+                <line class="arrow" x1="567" y1="302" x2="694" y2="302"/>
                 <text x="657" y="260" text-anchor="middle" class="small">6. 자동 동기화</text>
               </g>
               <g class="msg" data-step="7">
-                <line class="arrow ret" x1="785" y1="244" x2="785" y2="130"/>
+                <line class="arrow ret" x1="785" y1="244" x2="785" y2="142"/>
                 <text x="793" y="190" text-anchor="start" class="small">7. 이미지 pull</text>
               </g>
               <text x="450" y="410" text-anchor="middle" class="small">사람은 코드 리뷰와 머지 버튼만 누른다 — 서버에 직접 접속할 일이 없다</text>

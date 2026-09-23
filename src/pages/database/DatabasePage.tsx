@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import { ArrowDefs } from '../../shared/ArrowDefs'
 import { useFlowAnimation } from '../../shared/useFlowAnimation'
 import { scrollToId } from '../../shared/scroll'
+import { pc, srv, db } from '../../shared/deviceIcons'
 import './database.css'
 
 export default defineComponent({
@@ -57,35 +58,32 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 230" role="img" aria-label="애플리케이션과 DBMS의 관계 도면">
-              <rect class="box" x="30" y="70" width="170" height="80" />
-              <text x="115" y="102" text-anchor="middle" class="strong">애플리케이션</text>
-              <text x="115" y="124" text-anchor="middle" class="small">Spring / Node / Django</text>
+              {pc(115, '애플리케이션', 70)}
+              <text x="115" y="148" text-anchor="middle" class="small">Spring / Node / Django</text>
 
-              <rect class="boxdark" x="330" y="55" width="240" height="110" />
-              <text x="450" y="85" text-anchor="middle" class="strong">DBMS</text>
-              <text x="450" y="108" text-anchor="middle" class="small">SQL 해석 · 실행 계획 수립</text>
-              <text x="450" y="128" text-anchor="middle" class="small">동시성 제어 · 트랜잭션</text>
-              <text x="450" y="148" text-anchor="middle" class="small">인덱스 · 캐시 · 복구</text>
+              {srv(450, 'DBMS', 55)}
+              <text x="450" y="145" text-anchor="middle" class="small">SQL 해석 · 실행 계획 수립</text>
+              <text x="450" y="163" text-anchor="middle" class="small">동시성 제어 · 트랜잭션</text>
+              <text x="450" y="181" text-anchor="middle" class="small">인덱스 · 캐시 · 복구</text>
 
-              <rect class="box" x="700" y="70" width="170" height="80" />
-              <text x="785" y="102" text-anchor="middle" class="strong">데이터 파일</text>
-              <text x="785" y="124" text-anchor="middle" class="small">디스크 (데이터 + 로그)</text>
+              {db(785, '데이터 파일', 70)}
+              <text x="785" y="148" text-anchor="middle" class="small">디스크 (데이터 + 로그)</text>
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="200" y1="95" x2="324" y2="95" />
-                <text x="262" y="48" text-anchor="middle" class="small">1. SQL 전송</text>
+                <line class="arrow" x1="148" y1="95" x2="424" y2="95" />
+                <text x="286" y="48" text-anchor="middle" class="small">1. SQL 전송</text>
               </g>
               <g class="msg" data-step="2">
-                <line class="arrow" x1="570" y1="95" x2="694" y2="95" />
-                <text x="632" y="48" text-anchor="middle" class="small">2. 최적 경로로 읽기/쓰기</text>
+                <line class="arrow" x1="476" y1="95" x2="761" y2="95" />
+                <text x="618" y="48" text-anchor="middle" class="small">2. 최적 경로로 읽기/쓰기</text>
               </g>
               <g class="msg" data-step="3">
-                <line class="arrow ret" x1="694" y1="130" x2="570" y2="130" />
-                <text x="632" y="185" text-anchor="middle" class="small">3. 데이터 반환</text>
+                <line class="arrow ret" x1="761" y1="130" x2="476" y2="130" />
+                <text x="618" y="185" text-anchor="middle" class="small">3. 데이터 반환</text>
               </g>
               <g class="msg" data-step="4">
-                <line class="arrow ret" x1="324" y1="130" x2="200" y2="130" />
-                <text x="262" y="185" text-anchor="middle" class="small">4. 결과(행 목록) 응답</text>
+                <line class="arrow ret" x1="424" y1="130" x2="148" y2="130" />
+                <text x="286" y="185" text-anchor="middle" class="small">4. 결과(행 목록) 응답</text>
               </g>
             </svg>
             <figcaption>도면 1. 애플리케이션은 SQL만 보내고, 저장·검색·동시성·복구의 어려운 일은 전부 DBMS가 맡는다.</figcaption>
@@ -388,9 +386,8 @@ EXPLAIN SELECT * FROM users WHERE email = 'sol@x.kr';`}</code></pre>
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 290" role="img" aria-label="계좌 이체 트랜잭션의 흐름 도면">
-              <rect class="box" x="30" y="60" width="150" height="70" />
-              <text x="105" y="90" text-anchor="middle" class="strong">애플리케이션</text>
-              <text x="105" y="112" text-anchor="middle" class="small">이체 요청</text>
+              {pc(105, '애플리케이션', 60)}
+              <text x="105" y="138" text-anchor="middle" class="small">이체 요청</text>
 
               <rect class="boxdark" x="300" y="40" width="320" height="180" />
               <text x="460" y="68" text-anchor="middle" class="strong">트랜잭션 (하나의 묶음)</text>
@@ -400,17 +397,16 @@ EXPLAIN SELECT * FROM users WHERE email = 'sol@x.kr';`}</code></pre>
               <text x="460" y="155" text-anchor="middle" class="small">UPDATE B 잔액 +10,000</text>
               <text x="460" y="200" text-anchor="middle" class="small">중간 상태는 밖에서 보이지 않는다</text>
 
-              <rect class="box" x="720" y="60" width="150" height="70" />
-              <text x="795" y="90" text-anchor="middle" class="strong">디스크 확정</text>
-              <text x="795" y="112" text-anchor="middle" class="small">영구 반영</text>
+              {db(795, '디스크 확정', 60)}
+              <text x="795" y="136" text-anchor="middle" class="small">영구 반영</text>
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="180" y1="95" x2="294" y2="95" />
-                <text x="237" y="55" text-anchor="middle" class="small">1. BEGIN</text>
+                <line class="arrow" x1="140" y1="95" x2="294" y2="95" />
+                <text x="217" y="55" text-anchor="middle" class="small">1. BEGIN</text>
               </g>
               <g class="msg" data-step="2">
-                <line class="arrow" x1="620" y1="95" x2="714" y2="95" />
-                <text x="667" y="55" text-anchor="middle" class="small">2. COMMIT — 전부 확정</text>
+                <line class="arrow" x1="620" y1="95" x2="771" y2="95" />
+                <text x="695" y="55" text-anchor="middle" class="small">2. COMMIT — 전부 확정</text>
               </g>
 
               <g class="static">

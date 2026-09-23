@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import { ArrowDefs } from '../../../shared/ArrowDefs'
 import { useFlowAnimation } from '../../../shared/useFlowAnimation'
 import { scrollToId } from '../../../shared/scroll'
+import { pc, srv, db } from '../../../shared/deviceIcons'
 import './dev-environment.css'
 
 export default defineComponent({
@@ -141,44 +142,40 @@ export default defineComponent({
           정적 콘텐츠는 웹 서버가 바로 응답하고, 동적 요청만 WAS로 위임된다.</p>
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 210">
-              <rect class="box" x="20" y="90" width="140" height="64" />
-              <text x="90" y="117" text-anchor="middle" class="strong">클라이언트</text>
-              <text x="90" y="140" text-anchor="middle" class="small">웹 브라우저</text>
+              {pc(90, '클라이언트', 90)}
+              <text x="90" y="164" text-anchor="middle" class="small">웹 브라우저</text>
 
-              <rect class="boxsoft" x="260" y="90" width="140" height="64" />
-              <text x="330" y="117" text-anchor="middle" class="strong">웹 서버</text>
-              <text x="330" y="140" text-anchor="middle" class="small">Apache · Nginx</text>
+              {srv(330, '웹 서버', 90)}
+              <text x="330" y="164" text-anchor="middle" class="small">Apache · Nginx</text>
 
-              <rect class="boxdark" x="500" y="90" width="140" height="64" />
-              <text x="570" y="117" text-anchor="middle" class="strong">WAS</text>
-              <text x="570" y="140" text-anchor="middle" class="small">Tomcat · JEUS</text>
+              {srv(570, 'WAS', 90)}
+              <text x="570" y="164" text-anchor="middle" class="small">Tomcat · JEUS</text>
 
-              <rect class="boxsoft" x="740" y="90" width="140" height="64" />
-              <text x="810" y="117" text-anchor="middle" class="strong">DB 서버</text>
-              <text x="810" y="140" text-anchor="middle" class="small">Oracle · MySQL</text>
+              {db(810, 'DB 서버', 90)}
+              <text x="810" y="164" text-anchor="middle" class="small">Oracle · MySQL</text>
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="160" y1="112" x2="252" y2="112" />
+                <line class="arrow" x1="118" y1="112" x2="310" y2="112" />
                 <text x="210" y="78" text-anchor="middle" class="small">① HTTP 요청</text>
               </g>
               <g class="msg" data-step="2">
-                <line class="arrow" x1="400" y1="112" x2="492" y2="112" />
+                <line class="arrow" x1="350" y1="112" x2="550" y2="112" />
                 <text x="450" y="78" text-anchor="middle" class="small">② 동적 요청 위임</text>
               </g>
               <g class="msg" data-step="3">
-                <line class="arrow" x1="640" y1="112" x2="732" y2="112" />
+                <line class="arrow" x1="590" y1="112" x2="790" y2="112" />
                 <text x="690" y="78" text-anchor="middle" class="small">③ SQL 질의</text>
               </g>
               <g class="msg" data-step="4">
-                <line class="arrow ret" x1="740" y1="140" x2="648" y2="140" />
+                <line class="arrow ret" x1="790" y1="140" x2="590" y2="140" />
                 <text x="690" y="180" text-anchor="middle" class="small">④ 결과 집합</text>
               </g>
               <g class="msg" data-step="5">
-                <line class="arrow ret" x1="500" y1="140" x2="408" y2="140" />
+                <line class="arrow ret" x1="550" y1="140" x2="350" y2="140" />
                 <text x="450" y="180" text-anchor="middle" class="small">⑤ 동적 페이지</text>
               </g>
               <g class="msg" data-step="6">
-                <line class="arrow ret" x1="260" y1="140" x2="168" y2="140" />
+                <line class="arrow ret" x1="310" y1="140" x2="118" y2="140" />
                 <text x="210" y="180" text-anchor="middle" class="small">⑥ HTTP 응답</text>
               </g>
             </svg>
@@ -397,39 +394,35 @@ export default defineComponent({
           <h3>6-4. 빌드 자동화 흐름</h3>
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 235">
-              <rect class="box" x="20" y="100" width="140" height="64" />
-              <text x="90" y="127" text-anchor="middle" class="strong">개발자 PC</text>
-              <text x="90" y="150" text-anchor="middle" class="small">코드 작성</text>
+              {pc(90, '개발자 PC', 100)}
+              <text x="90" y="174" text-anchor="middle" class="small">코드 작성</text>
 
-              <rect class="boxsoft" x="260" y="100" width="140" height="64" />
-              <text x="330" y="127" text-anchor="middle" class="strong">원격 저장소</text>
-              <text x="330" y="150" text-anchor="middle" class="small">Git · SVN</text>
+              {srv(330, '원격 저장소', 100)}
+              <text x="330" y="174" text-anchor="middle" class="small">Git · SVN</text>
 
-              <rect class="boxdark" x="500" y="100" width="140" height="64" />
-              <text x="570" y="127" text-anchor="middle" class="strong">CI 서버</text>
-              <text x="570" y="150" text-anchor="middle" class="small">Jenkins</text>
+              {srv(570, 'CI 서버', 100)}
+              <text x="570" y="174" text-anchor="middle" class="small">Jenkins</text>
 
-              <rect class="boxsoft" x="740" y="100" width="140" height="64" />
-              <text x="810" y="127" text-anchor="middle" class="strong">운영 서버</text>
-              <text x="810" y="150" text-anchor="middle" class="small">서비스 반영</text>
+              {srv(810, '운영 서버', 100)}
+              <text x="810" y="174" text-anchor="middle" class="small">서비스 반영</text>
 
               <line class="life" x1="560" y1="164" x2="560" y2="196" />
               <line class="life" x1="100" y1="196" x2="100" y2="164" />
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="160" y1="132" x2="252" y2="132" />
+                <line class="arrow" x1="118" y1="132" x2="310" y2="132" />
                 <text x="210" y="90" text-anchor="middle" class="small">① 커밋 · 푸시</text>
               </g>
               <g class="msg" data-step="2">
-                <line class="arrow" x1="400" y1="132" x2="492" y2="132" />
+                <line class="arrow" x1="350" y1="132" x2="550" y2="132" />
                 <text x="450" y="90" text-anchor="middle" class="small">② 변경 감지</text>
               </g>
               <g class="msg" data-step="3">
-                <path class="arrow" d="M 515 100 C 530 42, 610 42, 625 100" />
+                <path class="arrow" d="M 545 100 C 555 50, 585 50, 595 100" />
                 <text x="570" y="48" text-anchor="middle" class="small">③ 빌드 · 테스트</text>
               </g>
               <g class="msg" data-step="4">
-                <line class="arrow" x1="640" y1="132" x2="732" y2="132" />
+                <line class="arrow" x1="590" y1="132" x2="790" y2="132" />
                 <text x="690" y="90" text-anchor="middle" class="small">④ 배포</text>
               </g>
               <g class="msg" data-step="5">

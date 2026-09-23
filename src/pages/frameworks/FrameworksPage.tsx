@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import { ArrowDefs } from '../../shared/ArrowDefs'
 import { useFlowAnimation } from '../../shared/useFlowAnimation'
 import { scrollToId } from '../../shared/scroll'
+import { pc, srv, db, person } from '../../shared/deviceIcons'
 import './frameworks.css'
 
 export default defineComponent({
@@ -89,28 +90,24 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 370" role="img" aria-label="프론트엔드와 백엔드의 요청 흐름 도면">
-              <rect class="box" x="30" y="140" width="120" height="64" />
-              <text x="90" y="178" text-anchor="middle" class="strong">사용자</text>
+              {person(90, '사용자', 140)}
 
-              <rect class="box" x="210" y="120" width="190" height="100" />
-              <text x="305" y="152" text-anchor="middle" class="strong">프론트엔드</text>
-              <text x="305" y="176" text-anchor="middle" class="small">브라우저에서 실행</text>
-              <text x="305" y="196" text-anchor="middle" class="small">화면 · 상호작용 · 입력 검증</text>
+              {pc(305, '프론트엔드', 120)}
+              <text x="305" y="200" text-anchor="middle" class="small">브라우저에서 실행</text>
+              <text x="305" y="218" text-anchor="middle" class="small">화면 · 상호작용 · 입력 검증</text>
 
-              <rect class="box" x="470" y="120" width="190" height="100" />
-              <text x="565" y="152" text-anchor="middle" class="strong">백엔드</text>
-              <text x="565" y="176" text-anchor="middle" class="small">서버에서 실행</text>
-              <text x="565" y="196" text-anchor="middle" class="small">규칙 · 보안 · 데이터 처리</text>
+              {srv(565, '백엔드', 120)}
+              <text x="565" y="202" text-anchor="middle" class="small">서버에서 실행</text>
+              <text x="565" y="220" text-anchor="middle" class="small">규칙 · 보안 · 데이터 처리</text>
 
-              <rect class="box" x="730" y="140" width="140" height="64" />
-              <text x="800" y="178" text-anchor="middle" class="strong">DB</text>
+              {db(800, 'DB', 140)}
 
               <g class="msg" data-step="1">
-                <line class="arrow" x1="150" y1="172" x2="204" y2="172" />
+                <line class="arrow" x1="108" y1="172" x2="273" y2="172" />
                 <text x="177" y="112" text-anchor="middle" class="small">1. 클릭 / 입력</text>
               </g>
               <g class="msg" data-step="2">
-                <line class="arrow" x1="400" y1="172" x2="464" y2="172" />
+                <line class="arrow" x1="335" y1="172" x2="540" y2="172" />
                 <text x="432" y="112" text-anchor="middle" class="small">2. API 요청 (JSON)</text>
               </g>
               <g class="msg" data-step="3">
@@ -118,11 +115,11 @@ export default defineComponent({
                 <text x="610" y="58" text-anchor="middle" class="small">3. 검증 · 비즈니스 로직</text>
               </g>
               <g class="msg" data-step="4">
-                <line class="arrow" x1="660" y1="172" x2="724" y2="172" />
+                <line class="arrow" x1="587" y1="172" x2="778" y2="172" />
                 <text x="695" y="112" text-anchor="middle" class="small">4. 쿼리</text>
               </g>
               <g class="msg" data-step="5">
-                <path class="arrow ret" d="M 760 204 C 550 330 240 300 95 212" />
+                <path class="arrow ret" d="M 795 188 C 550 330 240 300 100 200" />
                 <text x="420" y="345" text-anchor="middle" class="small">5. 응답 → 프론트가 화면에 반영</text>
               </g>
             </svg>
@@ -153,10 +150,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 350" role="img" aria-label="CSR 흐름 도면">
-              <rect class="box" x="165" y="14" width="170" height="36" />
-              <text x="250" y="38" text-anchor="middle" class="strong">브라우저</text>
-              <rect class="box" x="565" y="14" width="170" height="36" />
-              <text x="650" y="38" text-anchor="middle" class="strong">서버</text>
+              {pc(250, '브라우저', 14)}
+              {srv(650, '서버', 14)}
               <line class="life" x1="250" y1="50" x2="250" y2="335" />
               <line class="life" x1="650" y1="50" x2="650" y2="335" />
 
@@ -189,10 +184,8 @@ export default defineComponent({
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 330" role="img" aria-label="SSR 흐름 도면">
-              <rect class="box" x="165" y="14" width="170" height="36" />
-              <text x="250" y="38" text-anchor="middle" class="strong">브라우저</text>
-              <rect class="box" x="565" y="14" width="170" height="36" />
-              <text x="650" y="38" text-anchor="middle" class="strong">서버 (Next.js 등)</text>
+              {pc(250, '브라우저', 14)}
+              {srv(650, '서버 (Next.js 등)', 14)}
               <line class="life" x1="250" y1="50" x2="250" y2="315" />
               <line class="life" x1="650" y1="50" x2="650" y2="315" />
 

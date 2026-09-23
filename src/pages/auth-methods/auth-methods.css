@@ -48,20 +48,9 @@ svg.d .bar.top {
   padding: 10px 8px;
 }
 
-/* --- 도면 아이콘(컴퓨터·서버·스마트폰·DB·메일) 스타일 --- */
+/* --- 미니 카드 도면 전용 --- */
 svg.d.mini text { font-size: 13px; }
-svg.d .lbl { font-weight: 600; }
-svg.d .lbl-s { font-size: 11px; fill: var(--muted); }
-svg.d .ic { fill: var(--card); stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-svg.d .screen { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.4; }
-svg.d .sep { fill: none; stroke: var(--muted); stroke-width: 1.4; opacity: 0.55; }
-svg.d .vent { fill: var(--soft); stroke: none; }
-svg.d .led { fill: var(--ok); stroke: none; }
-svg.d .badge { fill: var(--accent); stroke: none; }
-svg.d .badge-t { fill: #fff; font-size: 10px; font-weight: 700; stroke: none; }
-svg.d .lockarc { fill: none; stroke: var(--ink); stroke-width: 1.6; }
-svg.d .flow { stroke: var(--ink); stroke-width: 2; fill: none; marker-end: url(#ah); stroke-linecap: round; }
-svg.d .flow.ret { stroke-dasharray: 5 4; }
+svg.d.mini .lbl-s { font-size: 11px; }
 .compare-grid .cmp-name {
   margin: 4px 0 0;
   font-size: 1.02em;

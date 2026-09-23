@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import { ArrowDefs } from '../../shared/ArrowDefs'
 import { useFlowAnimation } from '../../shared/useFlowAnimation'
 import { scrollToId } from '../../shared/scroll'
+import { pc, srv, db, person } from '../../shared/deviceIcons'
 import './auth-security.css'
 
 export default defineComponent({
@@ -239,12 +240,9 @@ const ok = await bcrypt.compare(input, hashed);`}</code></pre>
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 420" role="img" aria-label="세션 방식 순서 도면">
               {/* 참여자 */}
-              <rect class="box" x="115" y="14" width="170" height="36"/>
-              <text x="200" y="38" text-anchor="middle" class="strong">브라우저</text>
-              <rect class="box" x="395" y="14" width="170" height="36"/>
-              <text x="480" y="38" text-anchor="middle" class="strong">서버</text>
-              <rect class="box" x="645" y="14" width="190" height="36"/>
-              <text x="740" y="38" text-anchor="middle" class="strong">세션 저장소 (Redis)</text>
+              {pc(200, '브라우저')}
+              {srv(480, '서버')}
+              {db(740, '세션 저장소 (Redis)')}
               <line class="life" x1="200" y1="50" x2="200" y2="405"/>
               <line class="life" x1="480" y1="50" x2="480" y2="405"/>
               <line class="life" x1="740" y1="50" x2="740" y2="405"/>
@@ -290,10 +288,8 @@ const ok = await bcrypt.compare(input, hashed);`}</code></pre>
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 350" role="img" aria-label="토큰 방식 순서 도면">
-              <rect class="box" x="165" y="14" width="170" height="36"/>
-              <text x="250" y="38" text-anchor="middle" class="strong">클라이언트</text>
-              <rect class="box" x="565" y="14" width="170" height="36"/>
-              <text x="650" y="38" text-anchor="middle" class="strong">서버</text>
+              {pc(250, '클라이언트')}
+              {srv(650, '서버')}
               <line class="life" x1="250" y1="50" x2="250" y2="335"/>
               <line class="life" x1="650" y1="50" x2="650" y2="335"/>
 
@@ -405,10 +401,8 @@ const ok = await bcrypt.compare(input, hashed);`}</code></pre>
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 330" role="img" aria-label="토큰 위조 시도와 거부 도면">
-              <rect class="box" x="165" y="14" width="170" height="36"/>
-              <text x="250" y="38" text-anchor="middle" class="strong">공격자</text>
-              <rect class="box" x="565" y="14" width="170" height="36"/>
-              <text x="650" y="38" text-anchor="middle" class="strong">서버 (비밀 키 보유)</text>
+              {person(250, '공격자')}
+              {srv(650, '서버 (비밀 키 보유)')}
               <line class="life" x1="250" y1="50" x2="250" y2="315"/>
               <line class="life" x1="650" y1="50" x2="650" y2="315"/>
 
@@ -482,12 +476,9 @@ const ok = await bcrypt.compare(input, hashed);`}</code></pre>
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 510" role="img" aria-label="Access와 Refresh 토큰 재발급 흐름 도면">
-              <rect class="box" x="95" y="14" width="170" height="36"/>
-              <text x="180" y="38" text-anchor="middle" class="strong">클라이언트</text>
-              <rect class="box" x="385" y="14" width="170" height="36"/>
-              <text x="470" y="38" text-anchor="middle" class="strong">자원 서버 (API)</text>
-              <rect class="box" x="665" y="14" width="170" height="36"/>
-              <text x="750" y="38" text-anchor="middle" class="strong">인증 서버</text>
+              {pc(180, '클라이언트')}
+              {srv(470, '자원 서버 (API)')}
+              {srv(750, '인증 서버')}
               <line class="life" x1="180" y1="50" x2="180" y2="495"/>
               <line class="life" x1="470" y1="50" x2="470" y2="495"/>
               <line class="life" x1="750" y1="50" x2="750" y2="495"/>
@@ -673,14 +664,10 @@ const ok = await bcrypt.compare(input, hashed);`}</code></pre>
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 510" role="img" aria-label="OAuth 2.0 Authorization Code 흐름 도면">
-              <rect class="box" x="30" y="14" width="160" height="36"/>
-              <text x="110" y="38" text-anchor="middle" class="strong">사용자 브라우저</text>
-              <rect class="box" x="270" y="14" width="160" height="36"/>
-              <text x="350" y="38" text-anchor="middle" class="strong">클라이언트 앱</text>
-              <rect class="box" x="530" y="14" width="160" height="36"/>
-              <text x="610" y="38" text-anchor="middle" class="strong">인증 서버</text>
-              <rect class="box" x="740" y="14" width="150" height="36"/>
-              <text x="815" y="38" text-anchor="middle" class="strong">자원 서버</text>
+              {pc(110, '사용자 브라우저')}
+              {pc(350, '클라이언트 앱')}
+              {srv(610, '인증 서버')}
+              {srv(815, '자원 서버')}
               <line class="life" x1="110" y1="50" x2="110" y2="495"/>
               <line class="life" x1="350" y1="50" x2="350" y2="495"/>
               <line class="life" x1="610" y1="50" x2="610" y2="495"/>
@@ -800,14 +787,10 @@ const ok = await bcrypt.compare(input, hashed);`}</code></pre>
 
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 640" role="img" aria-label="SSO 동작 순서 도면">
-              <rect class="box" x="30" y="14" width="160" height="36"/>
-              <text x="110" y="38" text-anchor="middle" class="strong">브라우저</text>
-              <rect class="box" x="270" y="14" width="160" height="36"/>
-              <text x="350" y="38" text-anchor="middle" class="strong">서비스 A</text>
-              <rect class="box" x="510" y="14" width="160" height="36"/>
-              <text x="590" y="38" text-anchor="middle" class="strong">서비스 B</text>
-              <rect class="box" x="720" y="14" width="160" height="36"/>
-              <text x="800" y="38" text-anchor="middle" class="strong">IdP (Keycloak)</text>
+              {pc(110, '브라우저')}
+              {srv(350, '서비스 A')}
+              {srv(590, '서비스 B')}
+              {srv(800, 'IdP (Keycloak)')}
               <line class="life" x1="110" y1="50" x2="110" y2="625"/>
               <line class="life" x1="350" y1="50" x2="350" y2="625"/>
               <line class="life" x1="590" y1="50" x2="590" y2="625"/>

@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import { ArrowDefs } from '../../../shared/ArrowDefs'
 import { useFlowAnimation } from '../../../shared/useFlowAnimation'
 import { scrollToId } from '../../../shared/scroll'
+import { pc, srv } from '../../../shared/deviceIcons'
 import './network-basics.css'
 
 export default defineComponent({
@@ -268,10 +269,8 @@ export default defineComponent({
           괄호 채우기(SYN, ACK)로 자주 출제된다.</p>
           <figure class="diagram">
             <svg class="d anim" viewBox="0 0 900 330" role="img" aria-label="TCP 3-way 핸드셰이크">
-              <rect class="box" x="110" y="20" width="160" height="42" />
-              <text x="190" y="47" text-anchor="middle" class="strong">클라이언트</text>
-              <rect class="box" x="630" y="20" width="160" height="42" />
-              <text x="710" y="47" text-anchor="middle" class="strong">서버</text>
+              {pc(190, '클라이언트', 20)}
+              {srv(710, '서버', 20)}
               <line class="life" x1="190" y1="62" x2="190" y2="300" />
               <line class="life" x1="710" y1="62" x2="710" y2="300" />
 
